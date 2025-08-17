@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>RBW Splitter (FastAPI)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <h1>Red/Black → 1-bit Splitter (FastAPI)</h1>
+
+    {% if messages and messages|length %}
+      <ul class="flash">
+        {% for m in messages %}
+          <li>{{ m }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form action="/upload" method="post" enctype="multipart/form-data" class="card">
+      <label for="photo">Upload an image (png/jpg/jpeg/bmp/webp):</label>
+      <input type="file" id="photo" name="photo" accept=".png,.jpg,.jpeg,.bmp,.webp" required />
+      <button type="submit">Upload & Process</button>
+    </form>
+
+    {% if uploaded_name %}
+      <div class="previews">
+        <div class="preview card">
+          <h2>Original</h2>
+          <img src="{{ url_for('origin', path='/' + uploaded_name) }}" alt="original" />
+          <p class="filename">{{ uploaded_name }}</p>
+        </div>
+
+        <div class="preview card">
+          <h2>Black / White (1-bit BMP)</h2>
+          <img src="{{ url_for('ready_to_use', path='/' + bw_name) }}" alt="bw" />
+          <p class="filename">{{ bw_name }}</p>
+        </div>
+
+        <div class="preview card">
+          <h2>Red / White (1-bit BMP)</h2>
+          <img src="{{ url_for('ready_to_use', path='/' + rw_name) }}" alt="rw" />
+          <p class="filename">{{ rw_name }}</p>
+        </div>
+      </div>
+
+      <form action="/run-tool" method="post" class="card">
+        <input type="hidden" name="current_file" value="{{ uploaded_name }}" />
+        <button type="submit">Run Server Tool</button>
+      </form>
+    {% endif %}
+  </div>
+</body>
+</html>
