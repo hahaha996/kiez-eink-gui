@@ -20,6 +20,10 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 # run web
 http://192.168.178.86:8000/
 
+# split
+http://192.168.178.86:8000/split
+#insert
+http://192.168.178.86:8000//insert
 
 ```
  
