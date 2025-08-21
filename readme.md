@@ -23,3 +23,41 @@ http://192.168.178.86:8000/
 
 ```
  
+
+ ```json
+ [
+    {
+        "text": "Hello",
+        "box": [
+            40,
+            20,
+            250,
+            60
+        ],
+        "size": 28,
+        "color": "black",
+        "style": "normal"
+    },
+    {
+        "text": "Persönliche Vorsorge",
+        "box": [15, 300, 900, 330],
+        "size": 28,
+        "color": "red",
+        "style": "normal"
+    },
+    {
+        "text": "Essen und Trinken",
+        "box": [15, 350, 900, 380],
+        "size": 22,
+        "color": "red",
+        "style": "normal"
+    },
+    {
+        "text": "This line is a bit longer.",
+        "box": [15, 385, 900, 430],
+        "size": 10,
+        "color": "black",
+        "style": "normal"
+    }
+]
+```

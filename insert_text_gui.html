@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Text Inserter</title>
+  <style>
+    :root{
+      --bg:#0b0c10; --panel:#121419; --muted:#7a838f; --fg:#e9edf1; --accent:#ff3b3b; --ok:#22c55e;
+      --border: #1e2430; --input:#161a22; --btn:#1a2030; --btn-hover:#21283a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif}
+    header{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:0;z-index:10}
+    header h1{margin:0;font-size:16px;font-weight:600;letter-spacing:.2px}
+    .wrap{display:flex;min-height:calc(100vh - 56px)}
+    .left{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow:auto}
+    .left .stage{max-width:100%;width:100%;display:flex;justify-content:center}
+    .left img{max-width:100%;height:auto;border:1px solid var(--border);border-radius:10px;background:#0f1219}
+    .right{width:380px;border-left:1px solid var(--border);background:var(--panel);padding:14px;overflow:auto}
+    .section{border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--input)}
+    .section h3{margin:0 0 10px 0;font-size:13px;font-weight:600;color:#cfd6df}
+    label{display:block;font-size:12px;color:var(--muted);margin:8px 0 4px}
+    input[type="text"], input[type="number"], select, textarea{width:100%;background:#0f1219;border:1px solid #1b2030;color:var(--fg);padding:8px 10px;border-radius:8px;outline:none}
+    textarea{min-height:54px;resize:vertical}
+    .row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .row-2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .slot{border:1px dashed #2a3547;border-radius:10px;padding:10px;margin-bottom:10px;background:#0f1219}
+    .slot h4{margin:0 0 8px;font-size:12px;color:#aab4c2;font-weight:600}
+    .btns{display:flex;gap:8px;flex-wrap:wrap}
+    button{background:var(--btn);border:1px solid var(--border);color:var(--fg);padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+    button:hover{background:var(--btn-hover)}
+    .btn-accent{background:#2a0f12;border-color:#3b0f12;color:#ffb3b3}
+    .btn-accent:hover{background:#3a1115}
+    .btn-ok{background:#0f2917;border-color:#183a22;color:#b8ffd0}
+    .note{font-size:12px;color:var(--muted)}
+    .file-drop{border:2px dashed #2b3446;padding:14px;border-radius:12px;text-align:center;background:#0f1219}
+    .small{font-size:11px;color:#a3adba}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--border);font-size:11px;color:#c8d1dc}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Image Text Inserter  no-wrap, fixed-size text boxes</h1>
+  </header>
+  <div class="wrap">
+    <div class="left">
+      <div class="stage">
+        <img id="preview" alt="Preview will appear here" />
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="section">
+        <h3>1) Upload image</h3>
+        <div class="file-drop">
+          <input id="file" type="file" accept="image/*" />
+          <div class="small" style="margin-top:6px">Accepted: PNG, JPG, etc.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>2) Text slots <span class="pill">10</span></h3>
+        <div id="slots"></div>
+        <div class="note">Only fully filled slots will be sent.</div>
+      </div>
+
+      <div class="section">
+        <h3>3) Actions</h3>
+        <div class="btns">
+          <button id="btn-test" class="btn-ok">Test</button>
+          <button id="btn-reset">Reset image</button>
+          <button id="btn-download">Download</button>
+          <button id="btn-upload-remote" class="btn-accent">Upload & Run (other site)</button>
+        </div>
+        <div class="note" style="margin-top:8px">The page will display the processed image from the <code>/processing_img/</code> folder after testing.</div>
+      </div>
+
+      <div class="section">
+        <h3>Endpoints</h3>
+        <label>Other site base URL (for Upload & Run)</label>
+        <input id="remoteBase" type="text" placeholder="https://other-site.example" />
+        <div class="small">Will call <code>{base}/upload-and-process</code> then <code>{base}/run-server-tool</code>.</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const previewEl = document.getElementById('preview');
+const fileEl = document.getElementById('file');
+const slotsEl = document.getElementById('slots');
+const btnTest = document.getElementById('btn-test');
+const btnReset = document.getElementById('btn-reset');
+const btnDownload = document.getElementById('btn-download');
+const btnUploadRemote = document.getElementById('btn-upload-remote');
+const remoteBaseEl = document.getElementById('remoteBase');
+
+let currentImageURL = '';
+let originalImageURL = '';
+let lastSavedExt = '';
+
+// ---- Build 10 slots ----
+function slotTemplate(i){
+  return `
+  <div class="slot" data-slot="${i}">
+    <h4>Slot ${i+1}</h4>
+    <label>Text</label>
+    <textarea class="s-text" placeholder="Enter text..."></textarea>
+
+    <div class="row">
+      <div>
+        <label>x1</label>
+        <input type="number" class="s-x1" placeholder="x1" />
+      </div>
+      <div>
+        <label>y1</label>
+        <input type="number" class="s-y1" placeholder="y1" />
+      </div>
+      <div>
+        <label>x2</label>
+        <input type="number" class="s-x2" placeholder="x2" />
+      </div>
+      <div>
+        <label>y2</label>
+        <input type="number" class="s-y2" placeholder="y2" />
+      </div>
+    </div>
+
+    <div class="row-3" style="margin-top:8px">
+      <div>
+        <label>Color</label>
+        <select class="s-color">
+          <option value="black">Black</option>
+          <option value="red">Red</option>
+          <option value="white">White</option>
+        </select>
+      </div>
+      <div>
+        <label>Size (px)</label>
+        <input type="number" class="s-size" placeholder="24" />
+      </div>
+      <div>
+        <label>Style</label>
+        <select class="s-style">
+          <option value="normal">Normal</option>
+          <option value="bold">Bold</option>
+          <option value="italic">Italic</option>
+          <option value="bold-italic">Bold-Italic</option>
+        </select>
+      </div>
+    </div>
+  </div>`
+}
+slotsEl.innerHTML = Array.from({length:10}, (_,i)=>slotTemplate(i)).join('');
+
+// ---- Image preview ----
+fileEl.addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const url = URL.createObjectURL(file);
+  previewEl.src = url;
+  currentImageURL = url;
+  // keep a copy as the "old" image until server saves original
+  originalImageURL = url;
+  lastSavedExt = (file.name.split('.').pop()||'png').toLowerCase();
+});
+
+// Collect filled slots into payload
+function collectSlots(){
+  const nodes = slotsEl.querySelectorAll('.slot');
+  const out = [];
+  nodes.forEach((node)=>{
+    const text = node.querySelector('.s-text').value.trim();
+    const x1 = node.querySelector('.s-x1').value;
+    const y1 = node.querySelector('.s-y1').value;
+    const x2 = node.querySelector('.s-x2').value;
+    const y2 = node.querySelector('.s-y2').value;
+    const size = node.querySelector('.s-size').value;
+    const color = node.querySelector('.s-color').value;
+    const style = node.querySelector('.s-style').value;
+
+    const raw = [x1, y1, x2, y2, size];
+    console.log({raw: raw})
+    const ok =
+      text.trim() !== '' &&                                  // text present
+      raw.every(s => s.trim() !== '') &&                     // all numeric fields filled
+      raw.map(Number).every(Number.isFinite);                // all are valid numbers
+
+    if (ok) {
+      out.push({ text, box: raw.map(Number), size: Number(size), color, style });
+    }
+  });
+  return out;
+}
+
+// Map color for quick client-side preview if needed
+function colorToHex(name){
+  if(name==='red') return '#FF0000';
+  if(name==='white') return '#FFFFFF';
+  return '#000000';
+}
+
+// ---- Test button: upload image + params to backend ----
+btnTest.addEventListener('click', async ()=>{
+  const file = fileEl.files && fileEl.files[0];
+  if(!file){
+    alert('Please choose an image first.');
+    return;
+  }
+  const items = collectSlots();
+  if(items.length===0){
+    alert('Please fill at least one slot completely.');
+    return;
+  }
+  try{
+    const form = new FormData();
+    form.append('image', file);
+    form.append('items', JSON.stringify(items));
+    const res = await fetch('/processing_img', { method:'POST', body: form });
+    if(!res.ok) throw new Error('Server error');
+    const data = await res.json();
+    // Expect: { ok:true, url:'/processing_img/test_insert_text.ext', original_url:'/processing_img/original.ext' }
+    if(data.url){
+      // Cache-bust to avoid stale image
+      const bust = `${data.url}?t=${Date.now()}`;
+      previewEl.src = bust;
+      currentImageURL = bust;
+      lastSavedExt = (data.url.split('.').pop()||lastSavedExt).toLowerCase();
+    }
+    if(data.original_url){
+      originalImageURL = `${data.original_url}?t=${Date.now()}`;
+    }
+  }catch(err){
+    console.error(err);
+    alert('Failed to process image. Check backend.');
+  }
+});
+
+// ---- Reset button: show original image saved by backend ----
+btnReset.addEventListener('click', ()=>{
+  if(originalImageURL){
+    previewEl.src = originalImageURL;
+    currentImageURL = originalImageURL;
+  }else{
+    // fallback to local preview
+    previewEl.src = currentImageURL;
+  }
+});
+
+// ---- Download current image ----
+btnDownload.addEventListener('click', async ()=>{
+  if(!currentImageURL){
+    alert('No image to download.');
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = currentImageURL;
+  a.download = `current_image.${lastSavedExt||'png'}`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+});
+
+// ---- Upload current image to other site, then run tool ----
+btnUploadRemote.addEventListener('click', async ()=>{
+  const base = (remoteBaseEl.value||'').replace(/\/$/, '');
+  if(!base){
+    alert('Enter the other site base URL first.');
+    return;
+  }
+  if(!currentImageURL){
+    alert('No image loaded.');
+    return;
+  }
+  try{
+    // Fetch the current image as blob
+    const imgRes = await fetch(currentImageURL);
+    const blob = await imgRes.blob();
+    const form = new FormData();
+    form.append('file', blob, `current_image.${lastSavedExt||'png'}`);
+
+    // 1) upload and process
+    const upRes = await fetch(`${base}/upload-and-process`, { method: 'POST', body: form });
+    if(!upRes.ok) throw new Error('Remote upload failed');
+
+    // 2) run server tool
+    const runRes = await fetch(`${base}/run-server-tool`, { method: 'POST' });
+    if(!runRes.ok) throw new Error('Remote run failed');
+
+    alert('Uploaded to other site and triggered server tool successfully.');
+  }catch(err){
+    console.error(err);
+    alert('Remote operation failed (see console).');
+  }
+});
+</script>
+</body>
+</html>
