@@ -17,11 +17,16 @@ from werkzeug.utils import secure_filename  # pip install werkzeug
 import json, shutil, os
 from PIL import Image
 from typing import List, Dict
+from fastapi import FastAPI, BackgroundTasks
+import asyncio
+import signal
+
 
 # You provide this module/function elsewhere.
 # It should read the file at `path` and write two 1-bit BMPs into ready_to_use/.
 from splitter import spit_red_black  # <-- required function (do not implement here)
 from img_helper import draw_text_boxes_fixed
+from helpers import *
 
 # -------------------- Config --------------------
 BASE_DIR = Path(__file__).resolve().parent
@@ -66,6 +71,30 @@ templates = Jinja2Templates(directory=str(TEMPLATE_DIR))
 
 def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# --- Lifespan events ---
+@app.on_event("startup")
+async def startup_event():
+    # launch background task
+    global current_topic
+    current_topic = EinkTopic.ONE_TIME
+    print("init current topic: " + str(current_topic))
+    app.state.worker_task = asyncio.create_task(long_term_worker())
+    print("Background worker started.")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    # tell worker to stop gracefully
+    stop_event.set()
+    task = app.state.worker_task
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+    print("Background worker stopped.")
 
 
 @app.get("/split", response_class=HTMLResponse)
