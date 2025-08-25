@@ -47,7 +47,6 @@ current_topic: EinkTopic = EinkTopic.ONE_TIME
 # By default, only iterate over SLIDEx. ONE_TIME is set only once, after that it starts from over.
 async def gen_eink_show():
     global current_topic
-    print("ine gen eink show")
     print("Current topic: " + str(current_topic))
     async with eink_lock:
         if current_topic == EinkTopic.ONE_TIME:
