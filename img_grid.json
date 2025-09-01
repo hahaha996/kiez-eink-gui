@@ -1,0 +1,76 @@
+[
+    {
+        "text": "air_qualit: ",
+        "box": [15, 200, 900, 220],
+        "size": 20,
+        "color": "red",
+        "style": "bold"
+    },
+    {
+        "text": "2025-09-01 19:52:39: 39.247. Avg last 3: 39.444.",
+        "box": [15, 240, 900, 260],
+        "size": 15,
+        "color": "black",
+        "style": "normal"
+    },
+
+    {
+        "text": "battery_voltage: ",
+        "box": [15, 290, 900, 310],
+        "size": 20,
+        "color": "red",
+        "style": "bold"
+    },
+    {
+        "text": "2025-09-01 19:52:39: 39.247. Avg last 3: 39.444.",
+        "box": [15, 330, 900, 350],
+        "size": 15,
+        "color": "black",
+        "style": "normal"
+    },
+
+    {
+        "text": "air_qualit: ",
+        "box": [15, 380, 900, 400],
+        "size": 20,
+        "color": "red",
+        "style": "bold"
+    },
+    {
+        "text": "2025-09-01 19:52:39: 39.247. Avg last 3: 39.444.",
+        "box": [15, 420, 900, 440],
+        "size": 15,
+        "color": "black",
+        "style": "normal"
+    },
+
+    {
+        "text": "air_qualit: ",
+        "box": [15, 470, 900, 490],
+        "size": 20,
+        "color": "red",
+        "style": "bold"
+    },
+    {
+        "text": "2025-09-01 19:52:39: 39.247. Avg last 3: 39.444.",
+        "box": [15, 510, 900, 530],
+        "size": 15,
+        "color": "black",
+        "style": "normal"
+    },
+
+        {
+        "text": "air_qualit: ",
+        "box": [15, 560, 900, 580],
+        "size": 20,
+        "color": "red",
+        "style": "bold"
+    },
+    {
+        "text": "2025-09-01 19:52:39: 39.247. Avg last 3: 39.444.",
+        "box": [15, 600, 900, 620],
+        "size": 15,
+        "color": "black",
+        "style": "normal"
+    }
+]
