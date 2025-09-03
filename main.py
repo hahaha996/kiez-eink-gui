@@ -199,7 +199,7 @@ async def upload(request: Request, photo: UploadFile = File(...)):
 
     # Redirect to show previews
     return RedirectResponse(
-        url=str(_url_for(request, "/", {"file": safe_name})),
+        url=str(_url_for(request, "/split", {"file": safe_name})),
         status_code=status.HTTP_303_SEE_OTHER,
     )
 

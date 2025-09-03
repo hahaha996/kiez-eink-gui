@@ -1,6 +1,12 @@
 from img_helper import *
+from helpers import *
+from splitter import *
+from pathlib import Path
+import os
+import subprocess
 
 FONT_PATH_1 = "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Regular.ttf"
+TOOL_CMD = os.environ.get("RBW_TOOL_CMD", "/home/pi/kiezbox-ha/c-eink-project/epd")
 
 items = [
     {
@@ -120,6 +126,10 @@ FONT_MAP = {
 }
 COLOR_MAP = {"black": (0,0,0), "red": (255,0,0), "white": (255,255,255)}
 
+BASE_DIR = Path(__file__).resolve().parent
+ORIGIN_DIR = BASE_DIR / "origin"
+OUTPUT_DIR = BASE_DIR / "ready_to_use"
+
 processed_items: List[Dict] = []
 for it in items:
     try:
@@ -147,4 +157,26 @@ codes = draw_text_boxes_fixed(
     items=processed_items,
     output_path="texted.png"  # saves as banner_with_text.png
 )
+
+bw_path, rw_path = spit_red_black("texted.png", OUTPUT_DIR)
+
+cmd = [TOOL_CMD, "kiezbox_epd13in3b", str(bw_path), str(rw_path)]
+try:
+    print(cmd)
+    result = subprocess.run(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False
+    )
+
+    code = result.returncode
+    out = (result.stdout or "").strip()
+    err = (result.stderr or "").strip()
+    msg = f"Tool exited with code {code}."
+    if out:
+        msg += f" STDOUT: {out}"
+    if err:
+        msg += f" STDERR: {err}"
+    print(msg)
+except Exception as e:
+    print(f"Error running tool: {e}")
+
 print(codes)  # e.g., {0: 0, 1: 0, 2: 1}  (2 was clipped)
