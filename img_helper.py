@@ -33,12 +33,22 @@ def _load_font(font_path: str, size: int) -> ImageFont.FreeTypeFont:
     except Exception as e:
         raise RuntimeError(f"Failed to load font '{font_path}' at size {size}: {e}")
 
-def _text_bbox(font: ImageFont.FreeTypeFont, text: str) -> Tuple[int, int, int, int]:
-    """
-    Returns (x0, y0, x1, y1) for the string at (0,0) baseline using font.getbbox().
-    Works better than getsize for precise vertical metrics.
-    """
-    return font.getbbox(text)  # requires Pillow ≥ 8.0
+def _wrap_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont, max_width: int) -> List[str]:
+    """Split text into lines that fit within max_width."""
+    words = text.split()
+    lines: List[str] = []
+    current = ""
+    for w in words:
+        test = (current + " " + w).strip()
+        if draw.textlength(test, font=font) <= max_width:
+            current = test
+        else:
+            if current:
+                lines.append(current)
+            current = w
+    if current:
+        lines.append(current)
+    return lines
 
 def draw_text_boxes_fixed(
     image_path: str,
@@ -49,23 +59,12 @@ def draw_text_boxes_fixed(
     default_valign: str = "top"      # "top" | "center" | "bottom"
 ) -> Dict[int, int]:
     """
-    Draws text into (x1,y1,x2,y2) boxes WITHOUT wrapping or resizing.
-    Text is clipped to its box. Returns {index: OK|CLIPPED}.
-
-    items: list of dicts, each with:
-      {
-        "text": str,
-        "box": (x1, y1, x2, y2),
-        "font_path": str,
-        "size": int,
-        "color": Color,               # e.g., (0,0,0) or "#FF0000"
-        # optional per-item overrides:
-        "align": "left"|"center"|"right",
-        "valign": "top"|"center"|"bottom"
-      }
+    Draws text into (x1,y1,x2,y2) boxes WITH wrapping.
+    If wrapped text exceeds the box vertically, extra lines are trimmed.
+    Returns {index: OK|CLIPPED}.
     """
     base_img = Image.open(image_path).convert("RGBA")
-    canvas = base_img.copy()  # where we’ll paste text layers
+    canvas = base_img.copy()
     statuses: Dict[int, int] = {}
 
     for idx, it in enumerate(items):
@@ -84,46 +83,48 @@ def draw_text_boxes_fixed(
             continue
 
         font = _load_font(font_path, size)
-        # Measure text using font bbox
-        tx0, ty0, tx1, ty1 = _text_bbox(font, text)
-        text_w = tx1 - tx0
-        text_h = ty1 - ty0
-
-        # Create a transparent layer exactly the size of the box (this enforces clipping)
         layer = Image.new("RGBA", (box_w, box_h), (0, 0, 0, 0))
         draw = ImageDraw.Draw(layer)
 
-        # Horizontal positioning
-        if align == "center":
-            draw_x = (box_w - text_w) / 2 - tx0
-        elif align == "right":
-            draw_x = box_w - text_w - tx0
-        else:  # left
-            draw_x = -tx0
+        # --- Wrap text to fit width ---
+        lines = _wrap_text(draw, text, font, box_w)
+        line_h = font.getbbox("Hg")[3] - font.getbbox("Hg")[1]
+        total_h = len(lines) * line_h
 
-        # Vertical positioning
+        # >>> new: add adjustable line spacing factor <<<
+        line_spacing = int(line_h * 1.2)   # e.g. 20% more space
+        total_h = len(lines) * line_spacing
+
+        # Vertical positioning offset
         if valign == "center":
-            draw_y = (box_h - text_h) / 2 - ty0
+            y = max(0, (box_h - total_h) / 2)
         elif valign == "bottom":
-            draw_y = box_h - text_h - ty0
+            y = max(0, box_h - total_h)
         else:  # top
-            draw_y = -ty0
+            y = 0
 
-        # Draw text onto the layer
-        draw.text((draw_x, draw_y), text, font=font, fill=color)
+        clipped = 0
+        for line in lines:
+            if y + line_h > box_h:  # line would exceed box height
+                clipped = 1
+                break
+            w = draw.textlength(line, font=font)
+            if align == "center":
+                x = (box_w - w) / 2
+            elif align == "right":
+                x = box_w - w
+            else:
+                x = 0
+            draw.text((x, y), line, font=font, fill=color)
+            # y += line_h
+            y += line_spacing   # <<< use spacing instead of line_h
 
-        # Determine if any dimension clips
-        clipped = 1 if (text_w > box_w or text_h > box_h) else 0
         statuses[idx] = CLIPPED if clipped else OK
-
-        # Paste the layer into the canvas at (x1, y1) using itself as mask (clip is inherent)
         canvas.alpha_composite(layer, (x1, y1))
 
-    # Save with original format (unless output_path provided)
     if output_path is None:
         root, ext = os.path.splitext(image_path)
         output_path = f"{root}_with_text{ext}"
-    # Convert back if original was non-alpha (e.g., JPG)
     if base_img.mode != "RGBA" and output_path.lower().endswith((".jpg", ".jpeg")):
         canvas = canvas.convert("RGB")
     canvas.save(output_path)
