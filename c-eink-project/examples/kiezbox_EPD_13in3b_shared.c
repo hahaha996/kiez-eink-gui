@@ -2,9 +2,59 @@
 #include "EPD_13in3b.h"
 #include <time.h>
 
-int kiezbox_EPD_13in3b(const char* black_bmp_path, const char* ry_bmp_path)
+
+#include <stdio.h>
+
+typedef struct {
+    const char *text;   // string
+    int         box[4]; // [x1, y1, x2, y2]
+    const char *color;  // "red" or "black"
+} TextItem;
+
+typedef struct {
+    int id;
+    double value;
+} Item;
+
+void print_something() {
+        printf("Printing something!\n");
+}
+
+void process_items(Item *items, int count) {
+    if (items) {
+        for (int i = 0; i < count; i++) {
+            printf("Item %d: id=%d, value=%.2f\n", i, items[i].id, items[i].value);
+        }
+    } else {
+        printf("NO ITEMS!");
+    }
+}
+
+void process_text_items(TextItem *text_items, int count) {
+    if (text_items) {
+        for (int i = 0; i < count; i++) {
+            // You can only check inner pointers, e.g., the strings:
+            if (!text_items[i].text) { puts("item.text=NULL"); continue; }
+
+            printf("text: %s\n", text_items[i].text);
+            printf("box: [%d, %d, %d, %d]\n",
+                   text_items[i].box[0], text_items[i].box[1],
+                   text_items[i].box[2], text_items[i].box[3]);
+            printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
+        }
+    } else {
+        puts("NO ITEMS!");
+    }
+}
+
+int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_path, TextItem *text_items, int count)
 {
-    printf("KiezBox EPD_13IN3B_test Demo\r\n");
+    // process_items(text_items, count);
+    process_text_items(text_items, count);
+    printf("Files: %s %s\n", black_bmp_path, ry_bmp_path);
+    // return -111111;
+
+    printf("KiezBox kiezbox_EPD_13in3b_with_text Demo\r\n");
     if (DEV_Module_Init() != 0) {
         return -1;
     }
@@ -48,16 +98,45 @@ int kiezbox_EPD_13in3b(const char* black_bmp_path, const char* ry_bmp_path)
     /////////
 
     Paint_SelectImage(BlackImage);
-    //Paint_Clear(WHITE);
-    Paint_DrawPoint(10, 80, BLACK, DOT_PIXEL_1X1, DOT_STYLE_DFT);
-    Paint_DrawPoint(10, 90, BLACK, DOT_PIXEL_2X2, DOT_STYLE_DFT);
-    Paint_DrawPoint(10, 100, BLACK, DOT_PIXEL_3X3, DOT_STYLE_DFT);
-    Paint_DrawPoint(10, 110, BLACK, DOT_PIXEL_3X3, DOT_STYLE_DFT);
-    Paint_DrawLine(20, 70, 70, 120, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);
-    Paint_DrawLine(70, 70, 20, 120, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);      
-    Paint_DrawRectangle(20, 70, 70, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_EMPTY);
-    Paint_DrawRectangle(80, 70, 130, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
-    Paint_DrawString_EN(10, 0, "gcc -g -O -ffunction-sections -fdata-sections -Wall -D kiezbox_epd13in3b -D RPI ./bin/EPD_13in3b.o ./bin/GUI_BMPfile.o ./bin/GUI_Paint.o ./bin/kiezbox_EPD_13in3b_test.o ./bin/main.o ./bin/ImageData2.o ./bin/ImageData.o ./bin/font12.o ./bin/font12CN.o ./bin/font16.o ./bin/font20.o ./bin/font24.o ./bin/font24CN.o ./bin/font8.o ./bin/dev_hardware_SPI.o ./bin/DEV_Config.o -o epd -Wl,--gc-sections -llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
+    Paint_DrawString_EN(10, 0, "THIS IS a  long test test test llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
+    // Print supplied texts
+    if (text_items) {
+        for (int i = 0; i < count; i++) {
+            if (!strcmp(text_items[i].color, "black")) {
+                if (!text_items[i].text) { puts("item.text=NULL"); continue; }
+    
+                printf("text: %s\n", text_items[i].text);
+                printf("box: [%d, %d, %d, %d]\n",
+                       text_items[i].box[0], text_items[i].box[1],
+                       text_items[i].box[2], text_items[i].box[3]);
+                printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
+                Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], text_items[i].text, &Font16, WHITE, BLACK);
+            }
+        }
+    } else {
+        puts("NO ITEMS!");
+    }
+
+
+    Paint_SelectImage(RYImage);
+    Paint_DrawString_EN(10, 0, "THIS IS a  long test test test llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
+    // Print supplied texts
+    if (text_items) {
+        for (int i = 0; i < count; i++) {
+            if (!strcmp(text_items[i].color, "red")) {
+                if (!text_items[i].text) { puts("item.text=NULL"); continue; }
+    
+                printf("text: %s\n", text_items[i].text);
+                printf("box: [%d, %d, %d, %d]\n",
+                       text_items[i].box[0], text_items[i].box[1],
+                       text_items[i].box[2], text_items[i].box[3]);
+                printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
+                Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], text_items[i].text, &Font16, WHITE, BLACK);
+            }
+        }
+    } else {
+        puts("NO ITEMS!");
+    }
     /////////
 
     EPD_13IN3B_Display_Base(BlackImage, RYImage);

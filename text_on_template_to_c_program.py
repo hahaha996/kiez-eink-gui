@@ -1,0 +1,236 @@
+from img_helper import *
+from helpers import *
+from splitter import *
+from pathlib import Path
+import os
+import subprocess
+import ctypes
+
+
+FONT_PATH_1 = "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Regular.ttf"
+TOOL_CMD = os.environ.get("RBW_TOOL_CMD", "/home/pi/kiezbox-ha/c-eink-project/epd")
+
+items = [
+    {
+        "text": "Persönliche Vorsorge",
+        "box": (15, 300, 900, 330),
+        "font_path": FONT_PATH_1,
+        "size": 28,
+        "color": "#000000",
+        "align": "left",
+        "valign": "top",
+    },
+    {
+        "text": "Essen und Trinken",
+        "box": (15, 350, 900, 380),
+        "font_path": FONT_PATH_1,
+        "size": 22,
+        "color": (255, 0, 0),
+        "align": "left",
+        "valign": "top",
+    },
+    {
+        "text": "This line won't wrap and may be clipped sdffdxf.",
+        "box": (15, 385, 900, 430),
+        "font_path": FONT_PATH_1,
+        "size": 10,
+        "color": (0, 0, 0),
+        "align": "left",
+        "valign": "top",
+    },
+]
+
+items = [
+  {
+    "text": "CBRN-Gefahrenstoffe",
+    "box": [40, 320, 820, 345],
+    "size": 22,
+    "color": "red",
+    "style": "bold"
+  },
+  {
+    "text": "Die unterschiedlichen Gefahrenstoffe",
+    "box": [40, 355, 820, 370],
+    "size": 15,
+    "color": "black",
+    "style": "bold"
+  },
+  {
+    "text": "Ein Laie kann in der Regel die Gefährlichkeit von chemischen (C), biologischen (B),  radiologischen (R) und nuklearen (N) Gefahrenstoffen nicht erkennen.",
+    "box": [40, 375, 820, 410],
+    "size": 14,
+    "color": "black",
+    "style": "normal"
+  },
+  {
+    "text": "Wirkung auf Haut und Körper",
+    "box": [40, 420, 820, 440],
+    "size": 15,
+    "color": "black",
+    "style": "bold"
+  },
+  {
+    "text": "Verhalten bei Gefahrenstoff-Freisetzung. Kontaktieren Sie die lokale Giftnotrufzentrale.",
+    "box": [40, 445, 820, 470],
+    "size": 14, 
+    "color": "black",
+    "style": "normal"
+  },
+  {
+    "text": "Giftnotruf der Charité Universitätsmedizin Berlin:",
+    "box": [40, 470, 650, 495],
+    "size": 14,
+    "color": "black",
+    "style": "normal"
+  },
+  {
+    "text": "030 192 40",
+    "box": [468, 470, 820, 495],
+    "size": 14,
+    "color": "red",
+    "style": "bold"
+  },
+  {
+    "text": "Verhalten zu Hause",
+    "box": [40, 500, 820, 520],
+    "size": 15,
+    "color": "black",
+    "style": "bold"
+  },
+  {
+    "text": "Bleiben Sie im Gebäude, schließen Sie Fenster und Türen. Schalten Sie Ventilatoren und  Lüftungen aus. Vermeiden Sie unnötigen Sauerstoffverbrauch durch Kerzen oder Ähnliches. Bei radioaktiven Stoffen: suchen Sie einen Kellerraum auf",
+    "box": [40, 525, 820, 580],
+    "size": 14,
+    "color": "black",
+    "style": "normal"
+  },
+  {
+    "text": "Verhalten im Auto oder im Freien",
+    "box": [40, 590, 820, 615],
+    "size": 15,
+    "color": "black",
+    "style": "bold"
+  },
+  {
+    "text": "Bewegen Sie sich möglichst quer zur Windrichtung. Atmen Sie möglichst durch einen Atemschutz, zumindest durch ein Taschentuch. Waschen Sie Hände, Gesicht und Haare, ebenso Nase und Ohren mit Wasser und Seife. Bei biologischen Stoffen: desinfizieren Sie Ihre Hände zusätzlich.",
+    "box": [40, 620, 820, 670],
+    "size": 14,
+    "color": "black",
+    "style": "normal"
+  }
+]
+
+FONT_MAP = {
+    "normal": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Regular.ttf",
+    "bold": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Bold.ttf",
+    "italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Italic.ttf",
+    "bold-italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-BoldItalic.ttf",
+}
+COLOR_MAP = {"black": (0,0,0), "red": (255,0,0), "white": (255,255,255)}
+
+
+
+BASE_DIR = Path(__file__).resolve().parent
+ORIGIN_DIR = BASE_DIR / "origin"
+OUTPUT_DIR = BASE_DIR / "ready_to_use"
+
+
+#############
+# load the .so
+lib = ctypes.CDLL("./c-eink-project/bin/libepd13in3b.so")
+
+class TextItem(ctypes.Structure):
+    _fields_ = [
+        ("text",   ctypes.c_char_p),     # const char*
+        ("box",    ctypes.c_int * 4),    # int[4]
+        ("color",  ctypes.c_char_p),     # "red" or "black"
+    ]
+
+lib.print_something.argtypes = ()
+lib.print_something.restype = None
+lib.print_something()
+
+# Declare the function signature
+lib.kiezbox_EPD_13in3b_with_text.argtypes = [
+     ctypes.c_char_p,                   # black_bmp_path
+     ctypes.c_char_p,                   # ry_bmp_path
+     ctypes.POINTER(TextItem),          # text_items (array decays to pointer)
+     ctypes.c_int                       # count
+]
+lib.kiezbox_EPD_13in3b_with_text.restype =  ctypes.c_int
+
+# Create two TextItem instances
+item0 = TextItem(
+    text=b"Bewegen Sie sich quer zur Windrichtung.",
+    box=( ctypes.c_int * 4)(40, 200, 820, 670),
+    color=b"black",
+)
+item1 = TextItem(
+    text=b"Achtung! Nur in geschfesfs Bereichen aufhalten. Achtung! Nur in geschfesfs Bereichen aufhalten. Achtung! Nur in geschfesfs Bereichen aufhalten. Achtung! Nur in geschfesfs Bereichen aufhalten.",
+    box=( ctypes.c_int * 4)(50, 300, 900, 740),
+    color=b"red",
+)
+
+# Build a C array of TextItem[2]
+items = (TextItem * 2)(item0, item1)
+
+# prepare parameters
+black_path = b"/home/pi/kiezbox-ha/ready_to_use/texted_black_white.bmp"   # must be bytes
+ry_path = b"/home/pi/kiezbox-ha/ready_to_use/texted_red_white.bmp"
+
+# call the function
+result = lib.kiezbox_EPD_13in3b_with_text(black_path, ry_path, items, len(items))
+print("C function returned:", result)
+
+
+############
+# processed_items: List[Dict] = []
+# for it in items:
+#     try:
+#         text = it["text"]
+#         x1,y1,x2,y2 = it["box"]
+#         size = int(it["size"])
+#         color = COLOR_MAP.get(it.get("color","black"), (0,0,0))
+#         style = it.get("style","normal").lower()
+#         font_path = FONT_MAP.get(style, FONT_MAP["normal"])
+#         processed_items.append({
+#             "text": text,
+#             "box": (x1,y1,x2,y2),
+#             "font_path": font_path,
+#             "size": size,
+#             "color": color,
+#             "align": "left",
+#             "valign": "top",
+#         })
+#     except Exception:
+#         # ignore malformed entries per your spec
+#         continue
+
+# codes = draw_text_boxes_fixed(
+#     image_path="/home/pi/kiezbox-ha/img_templates/prevent_massnahme_template.png",
+#     items=processed_items,
+#     output_path="texted.png"  # saves as banner_with_text.png
+# )
+
+# bw_path, rw_path = spit_red_black("texted.png", OUTPUT_DIR)
+
+# cmd = [TOOL_CMD, "kiezbox_epd13in3b", str(bw_path), str(rw_path)]
+# try:
+#     print(cmd)
+#     result = subprocess.run(
+#         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False
+#     )
+
+#     code = result.returncode
+#     out = (result.stdout or "").strip()
+#     err = (result.stderr or "").strip()
+#     msg = f"Tool exited with code {code}."
+#     if out:
+#         msg += f" STDOUT: {out}"
+#     if err:
+#         msg += f" STDERR: {err}"
+#     print(msg)
+# except Exception as e:
+#     print(f"Error running tool: {e}")
+
+# print(codes)  # e.g., {0: 0, 1: 0, 2: 1}  (2 was clipped)

@@ -128,7 +128,15 @@ int EPD_7in5b_HD_test(void);
 int EPD_10in2b_test(void);
 
 int EPD_13in3b_test(void);
-int kiezbox_EPD_13in3b_test(const char* black_bmp_path, const char* ry_bmp_path);
+int kiezbox_EPD_13in3b(const char* black_bmp_path, const char* ry_bmp_path);
+// typedef struct {
+//     int id;
+//     double value;
+// } Item;
+// void process_items(Item *items, int count);
+// int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_path, Item *text_items, int count);
+
 
 int EPD_13in3k_test(void);
 #endif
+ 

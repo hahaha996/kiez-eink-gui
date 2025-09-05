@@ -216,6 +216,9 @@ else ifeq ($(EPD), epd13in3b)
 else ifeq ($(EPD), kiezbox_epd13in3b)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_13in3b.c
 	OBJ_C_Examples = ${DIR_Examples}/kiezbox_EPD_13in3b_test.c
+	OBJ_C_Examples += ${DIR_Examples}/kiezbox_EPD_13in3b_shared.c
+# else ifeq ($(EPD), kiezbox_epd13in3b_shared)
+# 	OBJ_C_EPD = ${DIR_EPD}/EPD_13in3b.c
 else ifeq ($(EPD), epd13in3k)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_13in3k.c
 	OBJ_C_Examples = ${DIR_Examples}/EPD_13in3k_test.c
@@ -265,7 +268,7 @@ JETSON: JETSON_DEV JETSON_epd
 
 TARGET = epd
 CC = gcc
-MSG = -g -O -ffunction-sections -fdata-sections -Wall
+MSG = -g -O -ffunction-sections -fdata-sections -Wall -fPIC
 CFLAGS += $(MSG) -D $(EPD)
 
 RPI_epd:${OBJ_O}

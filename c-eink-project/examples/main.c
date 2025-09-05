@@ -27,7 +27,10 @@ int main(int argc, char *argv[])
     const char* ry_path = argv[3];
 
     if (strcmp(mode, "kiezbox_epd13in3b") == 0) {
-        return kiezbox_EPD_13in3b_test(black_path, ry_path);
+        return kiezbox_EPD_13in3b(black_path, ry_path);
+    // }
+    //  else if (strcmp(mode, "kiezbox_epd13in3b_shared") == 0) {
+    //     return kiezbox_EPD_13in3b_shared(black_path, ry_path);
     } else {
         printf("Unknown mode: %s\r\n", mode);
         return 1;
