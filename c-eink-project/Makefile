@@ -217,8 +217,6 @@ else ifeq ($(EPD), kiezbox_epd13in3b)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_13in3b.c
 	OBJ_C_Examples = ${DIR_Examples}/kiezbox_EPD_13in3b_test.c
 	OBJ_C_Examples += ${DIR_Examples}/kiezbox_EPD_13in3b_shared.c
-# else ifeq ($(EPD), kiezbox_epd13in3b_shared)
-# 	OBJ_C_EPD = ${DIR_EPD}/EPD_13in3b.c
 else ifeq ($(EPD), epd13in3k)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_13in3k.c
 	OBJ_C_Examples = ${DIR_Examples}/EPD_13in3k_test.c
@@ -302,6 +300,19 @@ else
 	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/dev_hardware_SPI.c -o $(DIR_BIN)/dev_hardware_SPI.o $(LIB_RPI) $(DEBUG)
 	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_RPI) $(DEBUG)
 endif
+
+
+# CUSTOM CODE: Linking shared lib
+ifeq ($(EPD), kiezbox_epd13in3b)
+	@cd $(DIR_BIN) && echo "Linking shared lib at $$(pwd)" && \
+	gcc -shared -o libepd13in3b.so \
+	  font24CN.o font24.o font20.o font8.o \
+	  kiezbox_EPD_13in3b_test.o kiezbox_EPD_13in3b_shared.o \
+	  GUI_Paint.o GUI_BMPfile.o font16.o font12CN.o font12.o \
+	  DEV_Config.o EPD_13in3b.o dev_hardware_SPI.o \
+	  -Wl,-soname,libepd13in3b.so.1 -Wl,--no-undefined \
+	  -llgpio -lm && mv libepd13in3b.so ..
+endif
 	
 JETSON_DEV:
 	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/sysfs_software_spi.c -o $(DIR_BIN)/sysfs_software_spi.o $(LIB_JETSONI) $(DEBUG)
@@ -311,4 +322,5 @@ JETSON_DEV:
 clean :
 	rm $(DIR_BIN)/*.* 
 	rm $(TARGET) 
+
 

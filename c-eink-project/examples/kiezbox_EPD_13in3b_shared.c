@@ -9,6 +9,7 @@ typedef struct {
     const char *text;   // string
     int         box[4]; // [x1, y1, x2, y2]
     const char *color;  // "red" or "black"
+    int         size;
 } TextItem;
 
 typedef struct {
@@ -41,9 +42,25 @@ void process_text_items(TextItem *text_items, int count) {
                    text_items[i].box[0], text_items[i].box[1],
                    text_items[i].box[2], text_items[i].box[3]);
             printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
+            printf("size: %d\n", text_items[i].size);
         }
     } else {
         puts("NO ITEMS!");
+    }
+}
+
+sFONT* sizeToFontPointer(int size){
+    printf("Mapping size: %d\n", size);
+    if (size == 24)
+        return &Font24;
+    else if (size == 20)
+        return &Font20;
+    else if (size == 16)
+        return &Font16;
+    else if (size == 12)
+        return &Font12;
+    else {
+        return &Font8;
     }
 }
 
@@ -110,8 +127,9 @@ int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_
                        text_items[i].box[0], text_items[i].box[1],
                        text_items[i].box[2], text_items[i].box[3]);
                 printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
-                Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], text_items[i].text, &Font16, WHITE, BLACK);
-            }
+                Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], 
+                    text_items[i].text, sizeToFontPointer(text_items[i].size), WHITE, BLACK);
+            } 
         }
     } else {
         puts("NO ITEMS!");
@@ -119,7 +137,7 @@ int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_
 
 
     Paint_SelectImage(RYImage);
-    Paint_DrawString_EN(10, 0, "THIS IS a  long test test test llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
+    // Paint_DrawString_EN(10, 0, "THIS IS a  long test test test llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
     // Print supplied texts
     if (text_items) {
         for (int i = 0; i < count; i++) {
@@ -131,7 +149,7 @@ int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_
                        text_items[i].box[0], text_items[i].box[1],
                        text_items[i].box[2], text_items[i].box[3]);
                 printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
-                Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], text_items[i].text, &Font16, WHITE, BLACK);
+                Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], text_items[i].text, sizeToFontPointer(text_items[i].size), WHITE, BLACK);
             }
         }
     } else {
