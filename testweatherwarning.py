@@ -11,4 +11,3 @@ for w in berlin:
         return dt.datetime.fromtimestamp(ms/1000).strftime("%Y-%m-%d %H:%M")
     print(f"[{w.get('level')}] {w.get('event')}  {ts(w['start'])} ? {ts(w['end'])}")
     print(w.get("description","").strip(), "\n")
-s

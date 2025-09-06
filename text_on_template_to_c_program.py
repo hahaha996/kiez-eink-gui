@@ -9,8 +9,8 @@ import sys
 # -------------------------
 ALLOWED_SIZES = [8, 12, 16, 20, 24]
 
-DEFAULT_BLACK_BMP_NAME = "vorsorge_black_white.bmp"
-DEFAULT_RY_BMP_NAME    = "vorsorge_red_white.bmp"
+DEFAULT_BLACK_BMP_NAME = "gefahrenstoffe__black_white.bmp"
+DEFAULT_RY_BMP_NAME    = "gefahrenstoffe__red_white.bmp"
 
 # Default items payload (edit freely)
 DEFAULT_ITEMS = [
