@@ -115,7 +115,7 @@ int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_
     /////////
 
     Paint_SelectImage(BlackImage);
-    Paint_DrawString_EN(10, 0, "THIS IS a  long test test test llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
+    // Paint_DrawString_EN(10, 0, "THIS IS a  long test test test llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
     // Print supplied texts
     if (text_items) {
         for (int i = 0; i < count; i++) {
