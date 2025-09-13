@@ -2,6 +2,10 @@
 
 Compile if any change in the C++ program. In `c-eink-project`
 ```bash
+# GPIO button
+sudo apt-get -y install python3-rpi.gpio
+
+
 sudo make -j4 EPD=kiezbox_epd13in3b
 # now test the C++ program. It takes 3 params: model, paths to black-white and red-white images.
 sudo ~/kiezbox-ha/c-eink-project/epd kiezbox_epd13in3b ~/kiezbox-ha/ready_to_use/static1_black_white.bmp ~/kiezbox-ha/ready_to_use/static1_red_white.bmp
