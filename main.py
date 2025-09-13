@@ -20,6 +20,7 @@ from typing import List, Dict
 from fastapi import FastAPI, BackgroundTasks
 import asyncio
 import signal
+import uvicorn
 
 
 # You provide this module/function elsewhere.
@@ -252,6 +253,4 @@ def _url_for(request: Request, path: str, params: dict | None = None) -> URL:
 
 
 if __name__ == "__main__":
-    # Dev server
-    import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

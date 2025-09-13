@@ -22,7 +22,7 @@ from requests import Response
 
 # Import your existing renderer
 from text_on_template_to_c_program import run_epd_with_text
-
+from datetime import datetime
 
 # -----------------------------
 # Configuration & Constants
@@ -38,7 +38,7 @@ MAX_DESCRIPTION_LEN = int(os.environ.get("NINA_MAX_DESC_LEN", "300"))
 # Layout constants
 INNER_Y_DISTANCE = 20
 OUTER_Y_DISTANCE = 90  # kept for compatibility; not used directly here
-FROM_Y = 320
+FROM_Y = 200
 
 # German transliteration map
 GERMAN_MAP = str.maketrans(
@@ -139,34 +139,35 @@ def build_text_items_from_warning(data: Dict[str, Any], *,
         items.append(
             {
                 "text": f"Headline: {headline}",
-                "box": [40, from_y + i * inner_y_distance, 999, 999],
+                "box": [450, from_y + i * inner_y_distance, 999, 999],
                 "size": 20,
                 "color": "red",
                 "style": "bold",
             }
         )
-        i += 3
+        i += 4
 
     category = german_to_ascii(safe_get(["info", 0, "category", 0]))
     if category:
         items.append(
             {
                 "text": f"Category: {category}",
-                "box": [40, from_y + i * inner_y_distance, 999, 999],
+                "box": [450, from_y + i * inner_y_distance, 999, 999],
                 "size": 16,
                 "color": "black",
                 "style": "bold",
             }
         )
         i += 1
-
+    # .strftime("%H:%M:%S %d:%m:%Y")
     sender = german_to_ascii(safe_get(["sender"]))
-    sent = safe_get(["sent"])  # keep original timestamp string
+    sent = datetime.fromisoformat(safe_get(["sent"])).strftime("%H:%M:%S %d:%m:%Y")
+
     if sender or sent:
         items.append(
             {
                 "text": f"Sent by {sender} at {sent}".strip(),
-                "box": [40, from_y + i * inner_y_distance, 999, 999],
+                "box": [450, from_y + i * inner_y_distance, 999, 999],
                 "size": 16,
                 "color": "black",
                 "style": "bold",
@@ -179,7 +180,7 @@ def build_text_items_from_warning(data: Dict[str, Any], *,
         items.append(
             {
                 "text": area_desc,
-                "box": [40, from_y + i * inner_y_distance, 999, 999],
+                "box": [450, from_y + i * inner_y_distance, 999, 999],
                 "size": 16,
                 "color": "black",
                 "style": "bold",
@@ -192,13 +193,13 @@ def build_text_items_from_warning(data: Dict[str, Any], *,
         items.append(
             {
                 "text": f"ID: {identifier}",
-                "box": [40, from_y + i * inner_y_distance, 999, 999],
+                "box": [450, from_y + i * inner_y_distance, 999, 999],
                 "size": 16,
                 "color": "black",
                 "style": "bold",
             }
         )
-        i += 1
+        i += 2
 
     raw_desc = safe_get(["info", 0, "description"]) or ""
     cleaned = _clean_html_to_text(raw_desc)
@@ -207,7 +208,7 @@ def build_text_items_from_warning(data: Dict[str, Any], *,
         items.append(
             {
                 "text": f"Description: {desc}",
-                "box": [40, from_y + i * inner_y_distance, 999, 999],
+                "box": [450, from_y + i * inner_y_distance, 999, 999],
                 "size": 16,
                 "color": "black",
                 "style": "bold",
@@ -251,8 +252,8 @@ def render_warning_epd(
 
     if not black_bmp_name or not ry_bmp_name:
         if category == "Safety":
-            black_bmp_name = black_bmp_name or "hochwasser_black_white.bmp"
-            ry_bmp_name = ry_bmp_name or "hochwasser_red_white.bmp"
+            black_bmp_name = black_bmp_name or "kiezbox_sensor_black_white.bmp"
+            ry_bmp_name = ry_bmp_name or "kiezbox_sensor_black_white.bmp"
         else:
             black_bmp_name = black_bmp_name or fallback_black_bmp
             ry_bmp_name = ry_bmp_name or fallback_ry_bmp
