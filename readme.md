@@ -5,6 +5,11 @@ Compile if any change in the C++ program. In `c-eink-project`
 sudo make -j4 EPD=kiezbox_epd13in3b
 # now test the C++ program. It takes 3 params: model, paths to black-white and red-white images.
 sudo ~/kiezbox-ha/c-eink-project/epd kiezbox_epd13in3b ~/kiezbox-ha/ready_to_use/static1_black_white.bmp ~/kiezbox-ha/ready_to_use/static1_red_white.bmp
+
+
+python3 nina_warning_to_epd.py biw.BIWAPP-90480_NGRjZTkwNzI3NzRkZTBmNA --log-level DEBUG --use-local-json
+# Stromausfall
+python3 nina_warning_to_epd.py mow.DE-BR-B-SE017-20250909-17-001 --log-level DEBUG --use-local-json
 ```
 
 ```bash

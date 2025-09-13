@@ -1,0 +1,455 @@
+{
+    "identifier": "mow.DE-BR-B-SE017-20250909-17-001",
+    "sender": "DE-BR-B-SE017",
+    "sent": "2025-09-09T16:11:31+02:00",
+    "status": "Actual",
+    "msgType": "Update",
+    "scope": "Public",
+    "code": [
+        "DVN:7"
+    ],
+    "references": "DE-BR-B-SE017,mow.DE-BR-B-SE017-20250909-17-000,2025-09-09T09:59:42-00:00",
+    "info": [
+        {
+            "language": "DE",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Ausfall Notruf 112 aufgrund eines Stromausfalls - Berlin - Treptow-Köpenick",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Informieren Sie sich in den Medien, zum Beispiel im Lokalradio.<br/>Informieren Sie Ihre Nachbarn.<br/>- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.<br/>- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.<br/>- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen).<br/>- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.<br/>- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                },
+                {
+                    "valueName": "PHGEM",
+                    "value": "2825,100001"
+                },
+                {
+                    "valueName": "GRID",
+                    "value": "157445+1,158056+3,158668+7,159280+11,159892+13,160505+15,161117+16,161730+15,162343+14,162956+15,163570+13,164183+2,164187+7,164801+6,165416+4,166029+2,166642+1,167256,500001"
+                },
+                {
+                    "valueName": "cellBroadcastId",
+                    "value": "qGwcipGIWdJM"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick",
+                    "geocode": [
+                        {
+                            "valueName": "AreaId",
+                            "value": "0"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "DE-LS",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Ausfall Notruf",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Informieren Sie sich in den Medien, zum Beispiel im Lokalradio. Informieren Sie Ihre Nachbarn.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        },
+        {
+            "language": "EN",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Emergency number outage",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Get information from the media, for example on local radio. Inform your neighbours.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        },
+        {
+            "language": "AR",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "انقطاع اتصال الطوارئ",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "احصل على المعلومات من وسائل الإعلام، مثل الراديو المحلي. أخبر جيرانك.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        },
+        {
+            "language": "ES",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Fallo del número de emergencias",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Obtenga información de los medios de comunicación, por ejemplo, de la radio local. Informe a sus vecinos.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        },
+        {
+            "language": "FR",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Défaillance de l'appel d'urgence",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Informez-vous dans les médias, par exemple sur la radio locale. Informez vos voisins.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        },
+        {
+            "language": "PL",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Awaria połączenia alarmowego",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Zasięgnąć informacji w mediach, na przykład w radiu lokalnym. Poinformować sąsiadów.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        },
+        {
+            "language": "RU",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Отказ системы вызова экстренных оперативных служб",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Изучите информацию, предоставляемую средствами массовой информации, например, местными радиостанциями. Оповестите соседей.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        },
+        {
+            "language": "TR",
+            "category": [
+                "Infra"
+            ],
+            "event": "Gefahrenmitteilung",
+            "urgency": "Immediate",
+            "severity": "Severe",
+            "certainty": "Observed",
+            "eventCode": [
+                {
+                    "valueName": "profile:DE-BBK-EVENTCODE:01.00R",
+                    "value": "BBK-EVC-005"
+                }
+            ],
+            "headline": "Acil çağrı arızası",
+            "description": "Es folgt eine amtliche Mitteilung der Berliner Feuerwehr.<br/>Aufgrund eines flächendeckendem Stromausfalls im Bereich Berlin -Treptow/Köpenick, ist in gewissen Bereichen der Notruf 110 und 112 auch über Mobilfunk nicht erreichbar.",
+            "instruction": "Medyadan bilgi edinin, örneğin yerel radyolardan. Komşularınızı bilgilendirin.",
+            "web": "www.berliner-feuerwehr.de",
+            "parameter": [
+                {
+                    "valueName": "sender_signature",
+                    "value": "Land Berlin - Berliner Feuerwehr\nNicolaus-Groß-Weg 2\n13627 Berlin"
+                },
+                {
+                    "valueName": "sender_langname",
+                    "value": "Land Berlin - Berliner Feuerwehr"
+                },
+                {
+                    "valueName": "instructionCode",
+                    "value": "BBK-ISC-009 BBK-ISC-012 shortCode:BBK-ISC-011"
+                },
+                {
+                    "valueName": "instructionText",
+                    "value": "- Durch den Bezirk wurde ein Bügertelefon geschaltet: 030 / 90 297 4888. Für Notrufe, wenn möglich, weiter die 112 wählen.\n- Der Stromausfall wird eine längere Zeit anhalten, die genaue Dauer ist unbekannt.\n- Der Stromversorger versucht weitere Haushalte wieder zu versorgen. Hierzu werden die bereits versorgten Haushalte dazu aufgerufen, Strom einzusparen (Spül- und Waschmaschinen, sowie Streamingdienste nicht benutzen). \n- Vorsicht bei offenem Feuer! Behalten Sie Kerzen im Blick. Kochen niemals mit Grills oder Campingkochern in geschlossenen Räumen.\n- Im Zweifel nutzen Sie die Notrufannahmestellen von Feuerwehr und Polizei, weitere Informationen  unter: www.berliner-feuerwehr.de"
+                },
+                {
+                    "valueName": "warnVerwaltungsbereiche",
+                    "value": "110000000000"
+                }
+            ],
+            "area": [
+                {
+                    "areaDesc": "Berlin - Treptow-Köpenick"
+                }
+            ]
+        }
+    ]
+}
