@@ -68,7 +68,7 @@ def display_main_page():
     current_topic = EinkTopic.MAIN
     run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
     # rc = run_once_in_thread(text_items)
-    print("EPD returned:", rc)
+    # print("EPD returned:", rc)
 
 def switch_topic(target_topic: EinkTopic = None):
     global current_topic
@@ -135,6 +135,7 @@ def buttons_worker(eink_busy_flag: threading.Event):
 if __name__ == "__main__":
     print("########################### 1")
     display_main_page()
+    time.sleep(10)
     print("########################### 2")
     display_main_page()
     exit()

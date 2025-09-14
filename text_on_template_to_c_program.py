@@ -216,7 +216,16 @@ if __name__ == "__main__":
             black_bmp_name=args.black,
             ry_bmp_name=args.ry,
         )
-        print("C function returned:", rc)
+        print("1: C function returned:", rc)
+
+        rc = run_epd_with_text(
+            items=DEFAULT_ITEMS,
+            lib_path=args.lib,
+            output_dir=args.out,
+            black_bmp_name=args.black,
+            ry_bmp_name=args.ry,
+        )
+        print("2: C function returned:", rc)
     except Exception as e:
         print("Error:", e, file=sys.stderr)
         sys.exit(1)
