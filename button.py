@@ -17,6 +17,7 @@ Usage:
 from __future__ import annotations
 
 import atexit
+import threading
 import argparse
 from signal import pause
 from typing import Tuple
@@ -29,16 +30,22 @@ DEFAULT_LED_RED = 26
 DEFAULT_BTN16 = 16
 DEFAULT_LED_GREEN = 19
 
+IS_LED_GREEN_ON = False
+IS_LED_RED_ON = False
 
-def setup(
+def setup_buttons(
     *,
     btn20_pin: int = DEFAULT_BTN20,
     led_red_pin: int = DEFAULT_LED_RED,
     btn16_pin: int = DEFAULT_BTN16,
     led_green_pin: int = DEFAULT_LED_GREEN,
     bounce_time: float = 0.2,
+    eink_busy_flag: threading.Event,
+    red_callback = None,
+    green_callback = None,
 ) -> Tuple[Button, LED, Button, LED]:
     """Create devices, attach handlers, and register cleanup. Returns (btn20, led_red, btn16, led_green)."""
+
     btn20 = Button(btn20_pin, pull_up=True, bounce_time=bounce_time)
     led_red = LED(led_red_pin)
 
@@ -47,22 +54,42 @@ def setup(
 
     # Handlers
     def on_release_btn20() -> None:
+        global IS_LED_RED_ON
+        global IS_LED_GREEN_ON
         print(f"Button {btn20_pin} (yellow) released!")
-        led_red.on()
-
-    def on_press_btn20() -> None:
-        led_red.off()
-
+        if not eink_busy_flag.is_set():
+            if not IS_LED_RED_ON:
+                led_red.on()
+            else:
+                led_red.off()
+            IS_LED_RED_ON = not IS_LED_RED_ON
+            if red_callback != None:
+                print("Calling callback red_callback ...")
+                red_callback()
+        else:
+            print("Button released but eink busy. Ignore.")
+            
     def on_release_btn16() -> None:
+        global IS_LED_RED_ON
+        global IS_LED_GREEN_ON
         print(f"Button {btn16_pin} (lila) released!")
-        led_green.on()
+        if not IS_LED_GREEN_ON:
+            led_green.on()
+        else:
+            led_green.off() 
+        IS_LED_GREEN_ON = not IS_LED_GREEN_ON
+        if green_callback != None:
+            print("Calling callback green_callback ...")
+            green_callback()
 
-    def on_press_btn16() -> None:
-        led_green.off()
+    # def on_press_btn20() -> None:
+    #     led_red.off()
+    # def on_press_btn16() -> None:
+    #     led_green.off()
+    # btn20.when_pressed = on_press_btn20
+    # btn16.when_pressed = on_press_btn16
 
-    btn20.when_pressed = on_press_btn20
     btn20.when_released = on_release_btn20
-    btn16.when_pressed = on_press_btn16
     btn16.when_released = on_release_btn16
 
     # Ensure LEDs off and close on exit
@@ -76,7 +103,7 @@ def setup(
             btn20.close()
             btn16.close()
 
-    atexit.register(tidy)
+    atexit.register(tidy)   # without this the buton will not work!
 
     return btn20, led_red, btn16, led_green
 
@@ -90,7 +117,7 @@ def run(
     bounce_time: float = 0.2,
 ) -> None:
     """Convenience runner: sets up devices and blocks until Ctrl+C."""
-    setup(
+    setup_buttons(
         btn20_pin=btn20_pin,
         led_red_pin=led_red_pin,
         btn16_pin=btn16_pin,

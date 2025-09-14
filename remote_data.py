@@ -44,12 +44,6 @@ def summarize_device(records):
     return items
 
 def sensor__get_remote_data():
-    flux = '''
-    from(bucket: "kiezbox-test")
-    |> range(start: -10h)
-    |> filter(fn: (r) => r["_measurement"] == "sensor_values")
-    |> filter(fn: (r) => r["_field"] == "humid_main" or r["_field"] == "part_pm10" or r["_field"] == "part_pm25" or r["_field"] == "temp_main")
-    '''
 
     flux = '''
     from(bucket: "kiezbox-test")
@@ -76,7 +70,7 @@ def sensor__get_remote_data():
 
 def sensor__items_to_textitems(data_by_device):
     items = summarize_device(data_by_device["0"])
-    print(items)
+    # print(items)
     text_items = []
     # Field: air_quality
     # Last: 2025-09-06 16:44:16+00:00 = 93.274
