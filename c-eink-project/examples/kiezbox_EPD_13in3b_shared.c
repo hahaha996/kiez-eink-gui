@@ -50,7 +50,6 @@ void process_text_items(TextItem *text_items, int count) {
 }
 
 sFONT* sizeToFontPointer(int size){
-    printf("Mapping size: %d\n", size);
     if (size == 24)
         return &Font24;
     else if (size == 20)
@@ -67,7 +66,7 @@ sFONT* sizeToFontPointer(int size){
 int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_path, TextItem *text_items, int count)
 {
     // process_items(text_items, count);
-    process_text_items(text_items, count);
+    //process_text_items(text_items, count);
     printf("Files: %s %s\n", black_bmp_path, ry_bmp_path);
     // return -111111;
 
@@ -122,11 +121,11 @@ int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_
             if (!strcmp(text_items[i].color, "black")) {
                 if (!text_items[i].text) { puts("item.text=NULL"); continue; }
     
-                printf("text: %s\n", text_items[i].text);
-                printf("box: [%d, %d, %d, %d]\n",
-                       text_items[i].box[0], text_items[i].box[1],
-                       text_items[i].box[2], text_items[i].box[3]);
-                printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
+                // printf("text: %s\n", text_items[i].text);
+                // printf("box: [%d, %d, %d, %d]\n",
+                //        text_items[i].box[0], text_items[i].box[1],
+                //        text_items[i].box[2], text_items[i].box[3]);
+                // printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
                 Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], 
                     text_items[i].text, sizeToFontPointer(text_items[i].size), WHITE, BLACK);
             } 
@@ -142,13 +141,13 @@ int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_
     if (text_items) {
         for (int i = 0; i < count; i++) {
             if (!strcmp(text_items[i].color, "red")) {
-                if (!text_items[i].text) { puts("item.text=NULL"); continue; }
+                // if (!text_items[i].text) { puts("item.text=NULL"); continue; }
     
-                printf("text: %s\n", text_items[i].text);
-                printf("box: [%d, %d, %d, %d]\n",
-                       text_items[i].box[0], text_items[i].box[1],
-                       text_items[i].box[2], text_items[i].box[3]);
-                printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
+                // printf("text: %s\n", text_items[i].text);
+                // printf("box: [%d, %d, %d, %d]\n",
+                //        text_items[i].box[0], text_items[i].box[1],
+                //        text_items[i].box[2], text_items[i].box[3]);
+                // printf("color: %s\n", text_items[i].color ? text_items[i].color : "(null)");
                 Paint_DrawString_EN(text_items[i].box[0], text_items[i].box[1], text_items[i].text, sizeToFontPointer(text_items[i].size), WHITE, BLACK);
             }
         }

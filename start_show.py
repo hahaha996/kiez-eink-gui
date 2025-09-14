@@ -7,12 +7,12 @@ import time
 import signal
 import sys
 from enum import Enum
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 from remote_data import sensor__get_remote_data, sensor__items_to_textitems
 from nina_warning_to_epd import build_text_items_from_warning
 from text_on_template_to_c_program import run_epd_with_text
-from button import setup_buttons
-
+from button import setup_buttons, turn_red_on, turn_red_off, turn_green_on, turn_green_off
 # --- thread plumbing ---
 _stop = threading.Event()
 _devices_q: "queue.Queue[tuple]" = queue.Queue()
@@ -24,6 +24,18 @@ DEFAULT_LED_GREEN = 19
 
 eink_busy_flag = threading.Event()
 
+def run_once_in_thread(text_items):
+    with ThreadPoolExecutor(max_workers=1) as ex:
+        fut = ex.submit(
+            run_epd_with_text,
+            items=text_items,
+            black_bmp_name="kiezbox_sensor_black_white.bmp",
+            ry_bmp_name="kiezbox_sensor_red_white.bmp",
+        )
+        # wait (optionally add a timeout, e.g. 30s)
+        return fut.result(timeout=None)  # or timeout=30
+
+from enum import Enum
 
 class EinkTopic(Enum):
     SLIDE0 = 0
@@ -31,7 +43,9 @@ class EinkTopic(Enum):
     SLIDE2 = 2
     SLIDE3 = 3
     SLIDE4 = 4
-    MAIN = 9
+    MAIN = 5
+
+topics = [e.value for e in EinkTopic]
 current_topic: EinkTopic = EinkTopic.MAIN
 
 
@@ -50,9 +64,11 @@ def display_main_page():
         warning__text_items = build_text_items_from_warning(data)
         text_items += warning__text_items
 
-    print(f"Plotting {len(text_items)} Textbausteine!")
-    # run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
+    print(f"Plotting MAIN: Textbausteine len={len(text_items)}!")
     current_topic = EinkTopic.MAIN
+    run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
+    # rc = run_once_in_thread(text_items)
+    print("EPD returned:", rc)
 
 def switch_topic(target_topic: EinkTopic = None):
     global current_topic
@@ -62,11 +78,24 @@ def switch_topic(target_topic: EinkTopic = None):
         display_main_page()
     # TODO: switch to slidex. By default: next.
     else:
+        next_topic = (current_topic.value + 1) % len(EinkTopic)
+        current_topic = EinkTopic(next_topic)
         if current_topic == EinkTopic.MAIN:
-            current_topic = EinkTopic.SLIDE0
+            print("Back to main. Turn led off")
+            eink_busy_flag.set()
+            turn_red_off()
+            display_main_page()
+            eink_busy_flag.clear()
         else:
-            next_topic = (current_topic.value + 1) % (len(EinkTopic) - 1)
-            current_topic = EinkTopic(next_topic) 
+            turn_red_on()
+            if current_topic == EinkTopic.SLIDE0:
+                eink_busy_flag.set()
+                data_by_device = sensor__get_remote_data()
+                text_items = sensor__items_to_textitems(data_by_device)
+                print(f"Plotting REMOTE DATA: Textbausteine len={len(text_items)}")
+                run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
+                eink_busy_flag.clear()
+
     print("New topic: " + str(current_topic))
 
 def on_red():
@@ -87,7 +116,7 @@ def buttons_worker(eink_busy_flag: threading.Event):
         led_red_pin=DEFAULT_LED_RED,
         btn16_pin=DEFAULT_BTN16,
         led_green_pin=DEFAULT_LED_GREEN,
-        bounce_time=0.2,
+        bounce_time=0.1,
         eink_busy_flag=eink_busy_flag,
         red_callback=on_red,
         green_callback=on_green,
@@ -104,7 +133,11 @@ def buttons_worker(eink_busy_flag: threading.Event):
     
 
 if __name__ == "__main__":
-    # display_main_page()
+    print("########################### 1")
+    display_main_page()
+    print("########################### 2")
+    display_main_page()
+    exit()
 
     # Start worker as a daemon (exits with the main program)
     t = threading.Thread(target=buttons_worker, args=(eink_busy_flag,), daemon=True)
@@ -125,8 +158,9 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, _shutdown)  # system stop
 
     # Your main loop can keep doing other work here
-    time.sleep(5)
-    eink_busy_flag.set()
+    # time.sleep(15)
+    # eink_busy_flag.set()
+
     try:
         while True:
             # ... other tasks ...

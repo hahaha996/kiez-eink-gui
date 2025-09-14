@@ -33,6 +33,33 @@ DEFAULT_LED_GREEN = 19
 IS_LED_GREEN_ON = False
 IS_LED_RED_ON = False
 
+led_red = None
+led_green = None
+
+def turn_red_on():
+    global led_red
+    global IS_LED_RED_ON
+    led_red.on()
+    IS_LED_RED_ON = True
+
+def turn_red_off():
+    global led_red
+    global IS_LED_RED_ON
+    led_red.off()
+    IS_LED_RED_ON = False
+
+def turn_green_on():
+    global led_green
+    global IS_LED_GREEN_ON
+    led_green.on()
+    IS_LED_GREEN_ON = True
+
+def turn_green_off():
+    global led_green
+    global IS_LED_GREEN_ON
+    led_green.off()
+    IS_LED_GREEN_ON = False
+
 def setup_buttons(
     *,
     btn20_pin: int = DEFAULT_BTN20,
@@ -45,6 +72,8 @@ def setup_buttons(
     green_callback = None,
 ) -> Tuple[Button, LED, Button, LED]:
     """Create devices, attach handlers, and register cleanup. Returns (btn20, led_red, btn16, led_green)."""
+    global led_red
+    global led_green
 
     btn20 = Button(btn20_pin, pull_up=True, bounce_time=bounce_time)
     led_red = LED(led_red_pin)
@@ -54,21 +83,22 @@ def setup_buttons(
 
     # Handlers
     def on_release_btn20() -> None:
-        global IS_LED_RED_ON
-        global IS_LED_GREEN_ON
         print(f"Button {btn20_pin} (yellow) released!")
-        if not eink_busy_flag.is_set():
-            if not IS_LED_RED_ON:
-                led_red.on()
-            else:
-                led_red.off()
-            IS_LED_RED_ON = not IS_LED_RED_ON
-            if red_callback != None:
-                print("Calling callback red_callback ...")
-                red_callback()
-        else:
-            print("Button released but eink busy. Ignore.")
-            
+        red_callback()
+        # global IS_LED_RED_ON
+        # global IS_LED_GREEN_ON
+        # if not eink_busy_flag.is_set():
+        #     if not IS_LED_RED_ON:
+        #         led_red.on()
+        #     else:
+        #         led_red.off()
+        #     IS_LED_RED_ON = not IS_LED_RED_ON
+        #     if red_callback != None:
+        #         print("Calling callback red_callback ...")
+        #         red_callback()
+        # else:
+        #     print("Button released but eink busy. Ignore.")
+
     def on_release_btn16() -> None:
         global IS_LED_RED_ON
         global IS_LED_GREEN_ON
@@ -82,12 +112,12 @@ def setup_buttons(
             print("Calling callback green_callback ...")
             green_callback()
 
-    # def on_press_btn20() -> None:
-    #     led_red.off()
-    # def on_press_btn16() -> None:
-    #     led_green.off()
-    # btn20.when_pressed = on_press_btn20
-    # btn16.when_pressed = on_press_btn16
+    def on_press_btn20() -> None:
+        led_red.off()
+    def on_press_btn16() -> None:
+        led_green.off()
+    btn20.when_pressed = on_press_btn20
+    btn16.when_pressed = on_press_btn16
 
     btn20.when_released = on_release_btn20
     btn16.when_released = on_release_btn16
