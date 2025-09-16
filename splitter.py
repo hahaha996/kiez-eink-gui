@@ -66,8 +66,8 @@ def spit_red_black(path: str, outdir: str | None = None) -> Tuple[Path, Path]:
 
     # Exact color masks
     black_mask = exact_mask(arr, (0, 0, 0))
-    # red_mask   = exact_mask(arr, (255, 0, 0))
-    red_mask   = reddish_mask(arr)
+    red_mask   = exact_mask(arr, (255, 0, 0))
+    # red_mask   = reddish_mask(arr)
 
     # Convert to 1-bit images
     bw_img = mask_to_1bpp(black_mask)
@@ -75,8 +75,8 @@ def spit_red_black(path: str, outdir: str | None = None) -> Tuple[Path, Path]:
 
     # Save
     stem = in_path.stem
-    bw_path = output_dir / f"{stem}_black_white.bmp"
-    rw_path = output_dir / f"{stem}_red_white.bmp"
+    bw_path = output_dir / f"{stem}__black_white.bmp"
+    rw_path = output_dir / f"{stem}__red_white.bmp"
 
     bw_img.save(bw_path, format="BMP")
     rw_img.save(rw_path, format="BMP")

@@ -9,11 +9,13 @@ import sys
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 import subprocess
+from img_helper import draw_text_boxes_fixed, draw_text_boxes_rgba, draw_text_boxes_1bit_mono
+from splitter import spit_red_black
 
 from remote_data import sensor__get_remote_data, sensor__items_to_textitems
 from nina_warning_to_epd import build_text_items_from_warning
 from text_on_template_to_c_program import run_epd_with_text
-# from button import setup_buttons, turn_red_on, turn_red_off, turn_green_on, turn_green_off
+from button import setup_buttons, turn_red_on, turn_red_off, turn_green_on, turn_green_off
 # --- thread plumbing ---
 _stop = threading.Event()
 _devices_q: "queue.Queue[tuple]" = queue.Queue()
@@ -22,6 +24,20 @@ DEFAULT_BTN20 = 20
 DEFAULT_LED_RED = 26
 DEFAULT_BTN16 = 16
 DEFAULT_LED_GREEN = 19
+
+FONT_MAP = {
+    "normal": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Regular.ttf",
+    "bold": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Bold.ttf",
+    "italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Italic.ttf",
+    "bold-italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-BoldItalic.ttf",
+}
+FONT_MAP = {
+    "normal": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+    "bold": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+    "italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+    "bold-italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+}
+COLOR_MAP = {"black": (0,0,0), "red": (255,0,0), "white": (255,255,255)}
 
 eink_busy_flag = threading.Event()
 
@@ -67,7 +83,49 @@ def display_main_page():
 
     print(f"Plotting MAIN: Textbausteine len={len(text_items)}!")
     current_topic = EinkTopic.MAIN
-    run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
+
+    processed_items_bw = []
+    processed_items_rw = []
+    for item in text_items:
+        try:
+            text = item["text"]
+            x1,y1,x2,y2 = item["box"]
+            size = int(item["size"])
+            color = COLOR_MAP.get(item.get("color","black"), (0,0,0))
+            style = item.get("style","normal").lower()
+            font_path = FONT_MAP.get(style, FONT_MAP["normal"])
+            processed_item = {
+                "text": text,
+                "box": (x1,y1,x2,y2),
+                "font_path": font_path,
+                "size": size,
+                "color": color,
+                "align": "left",
+                "valign": "top",
+            }
+            if item.get("color","black") == "black":
+                processed_items_bw.append(processed_item)
+            else:
+                processed_items_rw.append(processed_item)
+        except Exception:
+            # ignore malformed entries per your spec
+            continue
+
+    outdir = "/home/pi/kiezbox-ha/temp/"
+    texted_img_path = outdir + "texted__kiezbox_sensor.png"
+    draw_text_boxes_1bit_mono(
+        image_path="/home/pi/kiezbox-ha/ready_to_use/kiezbox_sensor_black_white.bmp",
+        items=processed_items_bw,
+        output_path=outdir + "texted__kiezbox_sensor__bw.bmp"
+    )
+    draw_text_boxes_1bit_mono(
+        image_path="/home/pi/kiezbox-ha/ready_to_use/kiezbox_sensor_red_white.bmp",
+        items=processed_items_rw,
+        output_path=outdir + "texted__kiezbox_sensor__rw.bmp"
+    )
+    # spit_red_black(path=texted_img_path, outdir=outdir)
+
+    # run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
     # rc = run_once_in_thread(text_items)
     # print("EPD returned:", rc)
 
@@ -135,14 +193,16 @@ def buttons_worker(eink_busy_flag: threading.Event):
 
 if __name__ == "__main__":
     print("########################### 1")
-    # display_main_page()
-    run_epd_with_text(items=[], black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
+    display_main_page()
+    # run_epd_with_text(items=[], black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
     # subprocess.run(["sudo", "/home/pi/kiezbox-ha/c-eink-project/epd", "kiezbox_epd13in3b", 
     #     "/home/pi/kiezbox-ha/ready_to_use/static1_black_white.bmp", "/home/pi/kiezbox-ha/ready_to_use/static1_red_white.bmp"
     # ])
-    time.sleep(10)
-    print("########################### 2")
-    run_epd_with_text(items=[], black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
+
+    # time.sleep(10)
+
+    # print("########################### 2")
+    # run_epd_with_text(items=[], black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
     # display_main_page()
     # subprocess.run(["sudo", "/home/pi/kiezbox-ha/c-eink-project/epd", "kiezbox_epd13in3b", 
     #     "/home/pi/kiezbox-ha/ready_to_use/static1_black_white.bmp", "/home/pi/kiezbox-ha/ready_to_use/static1_red_white.bmp"

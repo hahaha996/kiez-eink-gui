@@ -45,7 +45,7 @@ int kiezbox_EPD_13in3b(const char* black_bmp_path, const char* ry_bmp_path)
     Paint_SelectImage(RYImage);
     GUI_ReadBmp(ry_bmp_path, 0, 0);     // <-- use provided red/RY image path
 
-    /////////
+    ///////// 
 
     Paint_SelectImage(BlackImage);
     //Paint_Clear(WHITE);

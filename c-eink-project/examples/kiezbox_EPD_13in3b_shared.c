@@ -159,6 +159,10 @@ int kiezbox_EPD_13in3b_with_text(const char* black_bmp_path, const char* ry_bmp_
     EPD_13IN3B_Display_Base(BlackImage, RYImage);
     DEV_Delay_ms(3000);
 
+    // printf("Clear...\r\n");
+    // EPD_13IN3B_Init();
+    // EPD_13IN3B_Clear();
+
     printf("Goto Sleep...\r\n");
     EPD_13IN3B_Sleep();
 

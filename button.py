@@ -115,7 +115,7 @@ def setup_buttons(
     def on_press_btn20() -> None:
         led_red.off()
     def on_press_btn16() -> None:
-        led_green.off()
+        led_green.off() 
     btn20.when_pressed = on_press_btn20
     btn16.when_pressed = on_press_btn16
 
