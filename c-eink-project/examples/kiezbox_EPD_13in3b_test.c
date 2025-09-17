@@ -47,17 +47,17 @@ int kiezbox_EPD_13in3b(const char* black_bmp_path, const char* ry_bmp_path)
 
     ///////// 
 
-    Paint_SelectImage(BlackImage);
+    // Paint_SelectImage(BlackImage);
     //Paint_Clear(WHITE);
-    Paint_DrawPoint(10, 80, BLACK, DOT_PIXEL_1X1, DOT_STYLE_DFT);
-    Paint_DrawPoint(10, 90, BLACK, DOT_PIXEL_2X2, DOT_STYLE_DFT);
-    Paint_DrawPoint(10, 100, BLACK, DOT_PIXEL_3X3, DOT_STYLE_DFT);
-    Paint_DrawPoint(10, 110, BLACK, DOT_PIXEL_3X3, DOT_STYLE_DFT);
-    Paint_DrawLine(20, 70, 70, 120, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);
-    Paint_DrawLine(70, 70, 20, 120, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);      
-    Paint_DrawRectangle(20, 70, 70, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_EMPTY);
-    Paint_DrawRectangle(80, 70, 130, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
-    Paint_DrawString_EN(10, 0, "gcc -g -O -ffunction-sections -fdata-sections -Wall -D kiezbox_epd13in3b -D RPI ./bin/EPD_13in3b.o ./bin/GUI_BMPfile.o ./bin/GUI_Paint.o ./bin/kiezbox_EPD_13in3b_test.o ./bin/main.o ./bin/ImageData2.o ./bin/ImageData.o ./bin/font12.o ./bin/font12CN.o ./bin/font16.o ./bin/font20.o ./bin/font24.o ./bin/font24CN.o ./bin/font8.o ./bin/dev_hardware_SPI.o ./bin/DEV_Config.o -o epd -Wl,--gc-sections -llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
+    // Paint_DrawPoint(10, 80, BLACK, DOT_PIXEL_1X1, DOT_STYLE_DFT);
+    // Paint_DrawPoint(10, 90, BLACK, DOT_PIXEL_2X2, DOT_STYLE_DFT);
+    // Paint_DrawPoint(10, 100, BLACK, DOT_PIXEL_3X3, DOT_STYLE_DFT);
+    // Paint_DrawPoint(10, 110, BLACK, DOT_PIXEL_3X3, DOT_STYLE_DFT);
+    // Paint_DrawLine(20, 70, 70, 120, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);
+    // Paint_DrawLine(70, 70, 20, 120, BLACK, DOT_PIXEL_1X1, LINE_STYLE_SOLID);      
+    // Paint_DrawRectangle(20, 70, 70, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_EMPTY);
+    // Paint_DrawRectangle(80, 70, 130, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
+    // Paint_DrawString_EN(10, 0, "gcc -g -O -ffunction-sections -fdata-sections -Wall -D kiezbox_epd13in3b -D RPI ./bin/EPD_13in3b.o ./bin/GUI_BMPfile.o ./bin/GUI_Paint.o ./bin/kiezbox_EPD_13in3b_test.o ./bin/main.o ./bin/ImageData2.o ./bin/ImageData.o ./bin/font12.o ./bin/font12CN.o ./bin/font16.o ./bin/font20.o ./bin/font24.o ./bin/font24CN.o ./bin/font8.o ./bin/dev_hardware_SPI.o ./bin/DEV_Config.o -o epd -Wl,--gc-sections -llgpio -lm -D DEBUG", &Font16, WHITE, BLACK);
     /////////
 
     EPD_13IN3B_Display_Base(BlackImage, RYImage);

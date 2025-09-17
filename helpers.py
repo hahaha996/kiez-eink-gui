@@ -40,9 +40,32 @@ class EinkTopic(Enum):
     SLIDE2 = 2
     SLIDE3 = 3
     SLIDE4 = 4
-    ONE_TIME = 9
+    MAIN = 5
 
-current_topic: EinkTopic = EinkTopic.ONE_TIME
+DEFAULT_BTN20 = 20
+DEFAULT_LED_RED = 26
+DEFAULT_BTN16 = 16
+DEFAULT_LED_GREEN = 19
+
+FONT_MAP = {
+    "normal": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Regular.ttf",
+    "bold": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Bold.ttf",
+    "italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Italic.ttf",
+    "bold-italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-BoldItalic.ttf",
+}
+FONT_MAP = {
+    "normal": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+    "bold": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+    "italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+    "bold-italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+}
+COLOR_MAP = {"black": (0,0,0), "red": (255,0,0), "white": (255,255,255)}
+TEMP_DIR = "/home/pi/kiezbox-ha/temp/"
+TEMPLATE_DIR = "/home/pi/kiezbox-ha/img_templates/"
+EPD_EXE_PATH = "/home/pi/kiezbox-ha/c-eink-project/epd"
+EPD_MODE = "kiezbox_epd13in3b"
+
+current_topic: EinkTopic = EinkTopic.MAIN
 
 # By default, only iterate over SLIDEx. ONE_TIME is set only once, after that it starts from over.
 async def gen_eink_show():

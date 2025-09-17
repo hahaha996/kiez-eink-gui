@@ -9,6 +9,8 @@ import sys
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 import subprocess
+
+from helpers import *
 from img_helper import draw_text_boxes_fixed, draw_text_boxes_rgba, draw_text_boxes_1bit_mono
 from splitter import spit_red_black
 
@@ -16,28 +18,31 @@ from remote_data import sensor__get_remote_data, sensor__items_to_textitems
 from nina_warning_to_epd import build_text_items_from_warning
 from text_on_template_to_c_program import run_epd_with_text
 from button import setup_buttons, turn_red_on, turn_red_off, turn_green_on, turn_green_off
+from gen_slide import *
+
 # --- thread plumbing ---
 _stop = threading.Event()
 _devices_q: "queue.Queue[tuple]" = queue.Queue()
 
-DEFAULT_BTN20 = 20
-DEFAULT_LED_RED = 26
-DEFAULT_BTN16 = 16
-DEFAULT_LED_GREEN = 19
+# DEFAULT_BTN20 = 20
+# DEFAULT_LED_RED = 26
+# DEFAULT_BTN16 = 16
+# DEFAULT_LED_GREEN = 19
 
-FONT_MAP = {
-    "normal": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Regular.ttf",
-    "bold": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Bold.ttf",
-    "italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Italic.ttf",
-    "bold-italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-BoldItalic.ttf",
-}
-FONT_MAP = {
-    "normal": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
-    "bold": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
-    "italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
-    "bold-italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
-}
-COLOR_MAP = {"black": (0,0,0), "red": (255,0,0), "white": (255,255,255)}
+# FONT_MAP = {
+#     "normal": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Regular.ttf",
+#     "bold": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Bold.ttf",
+#     "italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-Italic.ttf",
+#     "bold-italic": "/home/pi/kiezbox-ha/Roboto_Mono/static/RobotoMono-BoldItalic.ttf",
+# }
+# FONT_MAP = {
+#     "normal": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+#     "bold": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+#     "italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+#     "bold-italic": "/home/pi/kiezbox-ha/fonts/ProFontWindows.ttf",
+# }
+# COLOR_MAP = {"black": (0,0,0), "red": (255,0,0), "white": (255,255,255)}
+# OUTDIR = "/home/pi/kiezbox-ha/temp/"
 
 eink_busy_flag = threading.Event()
 
@@ -52,108 +57,116 @@ def run_once_in_thread(text_items):
         # wait (optionally add a timeout, e.g. 30s)
         return fut.result(timeout=None)  # or timeout=30
 
-from enum import Enum
+# from enum import Enum
 
-class EinkTopic(Enum):
-    SLIDE0 = 0
-    SLIDE1 = 1
-    SLIDE2 = 2
-    SLIDE3 = 3
-    SLIDE4 = 4
-    MAIN = 5
+# class EinkTopic(Enum):
+#     SLIDE0 = 0
+#     SLIDE1 = 1
+#     SLIDE2 = 2
+#     SLIDE3 = 3
+#     SLIDE4 = 4
+#     MAIN = 5
 
 topics = [e.value for e in EinkTopic]
-current_topic: EinkTopic = EinkTopic.MAIN
+# current_topic: EinkTopic = EinkTopic.MAIN
 
 
-def display_main_page():
-    global current_topic
-    text_items = []
-    ## Sensors
-    data_by_device = sensor__get_remote_data()
-    sensor__text_items = sensor__items_to_textitems(data_by_device)
-    text_items += sensor__text_items
-    ## Remote warning
-    data = {}
-    meldung_id = "mow.DE-BR-B-SE017-20250909-17-001"
-    with open(f'static/{meldung_id}.json') as f:
-        data = json.load(f)
-        warning__text_items = build_text_items_from_warning(data)
-        text_items += warning__text_items
+# def run_epd(TOOL_CMD: str, mode: str, black_bmp: str, ry_bmp: str):
+#     cmd = [TOOL_CMD, mode, str(black_bmp), str(ry_bmp)]
+#     try:
+#         print(cmd)
+#         code = subprocess.run(cmd)
+#     except Exception as e:
+#         print("Error running cmd: " + e)
 
-    print(f"Plotting MAIN: Textbausteine len={len(text_items)}!")
-    current_topic = EinkTopic.MAIN
+# def display_main_page():
+#     print("IN display_main_page!")
+#     return
+#     global current_topic
+#     text_items = []
+#     ## Sensors
+#     data_by_device = sensor__get_remote_data()
+#     sensor__text_items = sensor__items_to_textitems(data_by_device)
+#     text_items += sensor__text_items
+#     ## Remote warning
+#     data = {}
+#     meldung_id = "mow.DE-BR-B-SE017-20250909-17-001"
+#     with open(f'static/{meldung_id}.json') as f:
+#         data = json.load(f)
+#         warning__text_items = build_text_items_from_warning(data)
+#         text_items += warning__text_items
 
-    processed_items_bw = []
-    processed_items_rw = []
-    for item in text_items:
-        try:
-            text = item["text"]
-            x1,y1,x2,y2 = item["box"]
-            size = int(item["size"])
-            color = COLOR_MAP.get(item.get("color","black"), (0,0,0))
-            style = item.get("style","normal").lower()
-            font_path = FONT_MAP.get(style, FONT_MAP["normal"])
-            processed_item = {
-                "text": text,
-                "box": (x1,y1,x2,y2),
-                "font_path": font_path,
-                "size": size,
-                "color": color,
-                "align": "left",
-                "valign": "top",
-            }
-            if item.get("color","black") == "black":
-                processed_items_bw.append(processed_item)
-            else:
-                processed_items_rw.append(processed_item)
-        except Exception:
-            # ignore malformed entries per your spec
-            continue
+#     print(f"Plotting MAIN: Textbausteine len={len(text_items)}!")
+#     current_topic = EinkTopic.MAIN
 
-    outdir = "/home/pi/kiezbox-ha/temp/"
-    texted_img_path = outdir + "texted__kiezbox_sensor.png"
-    draw_text_boxes_1bit_mono(
-        image_path="/home/pi/kiezbox-ha/ready_to_use/kiezbox_sensor_black_white.bmp",
-        items=processed_items_bw,
-        output_path=outdir + "texted__kiezbox_sensor__bw.bmp"
-    )
-    draw_text_boxes_1bit_mono(
-        image_path="/home/pi/kiezbox-ha/ready_to_use/kiezbox_sensor_red_white.bmp",
-        items=processed_items_rw,
-        output_path=outdir + "texted__kiezbox_sensor__rw.bmp"
-    )
-    # spit_red_black(path=texted_img_path, outdir=outdir)
+#     processed_items_bw = []
+#     processed_items_rw = []
+#     for item in text_items:
+#         try:
+#             text = item["text"]
+#             x1,y1,x2,y2 = item["box"]
+#             size = int(item["size"])
+#             color = COLOR_MAP.get(item.get("color","black"), (0,0,0))
+#             style = item.get("style","normal").lower()
+#             font_path = FONT_MAP.get(style, FONT_MAP["normal"])
+#             processed_item = {
+#                 "text": text,
+#                 "box": (x1,y1,x2,y2),
+#                 "font_path": font_path,
+#                 "size": size,
+#                 "color": color,
+#                 "align": "left",
+#                 "valign": "top",
+#             }
+#             if item.get("color","black") == "black":
+#                 processed_items_bw.append(processed_item)
+#             else:
+#                 processed_items_rw.append(processed_item)
+#         except Exception:
+#             # ignore malformed entries per your spec
+#             continue
+#     print("plotting ...")
+#     outdir = "/home/pi/kiezbox-ha/temp/"
+#     # texted_img_path = outdir + "texted__kiezbox_sensor.png"
+#     draw_text_boxes_1bit_mono(
+#         image_path="/home/pi/kiezbox-ha/ready_to_use/kiezbox_sensor_black_white.bmp",
+#         items=processed_items_bw,
+#         output_path=outdir + "texted__kiezbox_sensor__bw.bmp"
+#     )
+#     draw_text_boxes_1bit_mono(
+#         image_path="/home/pi/kiezbox-ha/ready_to_use/kiezbox_sensor_red_white.bmp",
+#         items=processed_items_rw,
+#         output_path=outdir + "texted__kiezbox_sensor__rw.bmp"
+#     )
 
-    # run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
-    # rc = run_once_in_thread(text_items)
-    # print("EPD returned:", rc)
+#     run_epd(
+#         "/home/pi/kiezbox-ha/c-eink-project/epd", "kiezbox_epd13in3b", 
+#         outdir + "texted__kiezbox_sensor__bw.bmp",
+#         outdir + "texted__kiezbox_sensor__rw.bmp"
+#     )
 
 def switch_topic(target_topic: EinkTopic = None):
+    """ By default jump to next topic. If target_topic, then show it """
     global current_topic
     print("Switching topic. Current: " + str(current_topic))
 
-    if target_topic == EinkTopic.MAIN:
-        display_main_page()
-    # TODO: switch to slidex. By default: next.
+    if target_topic != None:
+        target_topic(target_topic)
     else:
         next_topic = (current_topic.value + 1) % len(EinkTopic)
         current_topic = EinkTopic(next_topic)
-        if current_topic == EinkTopic.MAIN:
+        if current_topic == EinkTopic.MAIN or current_topic.value > 5:
             print("Back to main. Turn led off")
             eink_busy_flag.set()
             turn_red_off()
-            display_main_page()
+            run__slide(current_topic, TEMP_DIR)
             eink_busy_flag.clear()
         else:
             turn_red_on()
-            if current_topic == EinkTopic.SLIDE0:
-                eink_busy_flag.set()
-                data_by_device = sensor__get_remote_data()
-                text_items = sensor__items_to_textitems(data_by_device)
-                print(f"Plotting REMOTE DATA: Textbausteine len={len(text_items)}")
-                run_epd_with_text(items=text_items, black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
-                eink_busy_flag.clear()
+            eink_busy_flag.set()
+            print("slide: ",current_topic.value)
+            run__slide(current_topic, TEMP_DIR)
+            eink_busy_flag.clear()
 
     print("New topic: " + str(current_topic))
 
@@ -192,23 +205,11 @@ def buttons_worker(eink_busy_flag: threading.Event):
     
 
 if __name__ == "__main__":
-    print("########################### 1")
-    display_main_page()
-    # run_epd_with_text(items=[], black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
-    # subprocess.run(["sudo", "/home/pi/kiezbox-ha/c-eink-project/epd", "kiezbox_epd13in3b", 
-    #     "/home/pi/kiezbox-ha/ready_to_use/static1_black_white.bmp", "/home/pi/kiezbox-ha/ready_to_use/static1_red_white.bmp"
-    # ])
-
-    # time.sleep(10)
-
-    # print("########################### 2")
-    # run_epd_with_text(items=[], black_bmp_name="kiezbox_sensor_black_white.bmp", ry_bmp_name="kiezbox_sensor_red_white.bmp")
+    print("########################### App starting up ...")
+    global current_topic
+    current_topic = EinkTopic.MAIN
+    run__slide(current_topic, TEMP_DIR)
     # display_main_page()
-    # subprocess.run(["sudo", "/home/pi/kiezbox-ha/c-eink-project/epd", "kiezbox_epd13in3b", 
-    #     "/home/pi/kiezbox-ha/ready_to_use/static1_black_white.bmp", "/home/pi/kiezbox-ha/ready_to_use/static1_red_white.bmp"
-    # ])
-    # pause()
-    exit()
 
     # Start worker as a daemon (exits with the main program)
     t = threading.Thread(target=buttons_worker, args=(eink_busy_flag,), daemon=True)
