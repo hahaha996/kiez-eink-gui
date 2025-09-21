@@ -292,13 +292,13 @@ from img_helper import draw_text_boxes_1bit_mono
 from remote_data import sensor__get_remote_data, sensor__items_to_textitems
 from nina_warning_to_epd import build_text_items_from_warning
 
-class EinkTopic(Enum):
-    SLIDE0 = 0
-    SLIDE1 = 1
-    SLIDE2 = 2
-    SLIDE3 = 3
-    SLIDE4 = 4
-    MAIN = 5
+# class EinkTopic(Enum):
+#     SLIDE0 = 0
+#     SLIDE1 = 1
+#     SLIDE2 = 2
+#     SLIDE3 = 3
+#     SLIDE4 = 4
+#     MAIN = 5
 
 # TODO: handle error
 def gen__generic(text_items: list[dict], bw_path: str, rw_path: str, bw_outpath: str, rw_outpath: str) -> int:
@@ -348,7 +348,7 @@ def run_epd(exe_path: str, mode: str, black_bmp: str, ry_bmp: str):
     except Exception as e:
         print("Error running cmd: ", e)
 
-def prepare_data_main_page():
+def prepare_data_main_page(local_json_path: str = ""):
     # global current_topic
     text_items = []
     ## Sensors
@@ -357,16 +357,20 @@ def prepare_data_main_page():
     text_items += sensor__text_items
     ## Remote warning
     data = {}
-    meldung_id = "mow.DE-BR-B-SE017-20250909-17-001"
-    with open(f'static/{meldung_id}.json') as f:
-        data = json.load(f)
-        warning__text_items = build_text_items_from_warning(data)
-        text_items += warning__text_items
-
+    if (local_json_path):
+      print("## Load warning from local json: ", local_json_path)
+      with open(local_json_path) as f:
+          data = json.load(f)
+    else:
+      api_point = ""
+      print("## Load warning from API: ", api_point)
+      pass
+    warning__text_items = build_text_items_from_warning(data)
+    text_items += warning__text_items
     print(f"Data for MAIN: Textbausteine len={len(text_items)}!")
     return text_items
 
-def run__slide(current_topic: EinkTopic, outdir: str):
+def run__slide(current_topic: EinkTopic, outdir: str, dry_run: bool = False):
     topic = ""
     bw_path = ""
     bw_outpath = ""
@@ -374,6 +378,7 @@ def run__slide(current_topic: EinkTopic, outdir: str):
     rw_outpath = ""
     items = []
     print("topic=",current_topic.value)
+    # get data
     if current_topic == EinkTopic.SLIDE0:
         topic = "vorsorge"
         items = topic_names__items[topic]
@@ -391,11 +396,20 @@ def run__slide(current_topic: EinkTopic, outdir: str):
         items = topic_names__items[topic]
     else:
         topic = "kiezbox_sensor"
-        items = prepare_data_main_page()
-
+        meldung_id = "mow.DE-BR-B-SE017-20250909-17-001"
+        local_json_path = f'static/{meldung_id}.json'
+        items = prepare_data_main_page(local_json_path)
+    #prepare paths
     bw_path = TEMPLATE_DIR + f"{topic}_black_white.bmp"
     bw_outpath = outdir + f"texted__{topic}_black_white.bmp"
     rw_path = TEMPLATE_DIR + f"{topic}_red_white.bmp"
     rw_outpath = outdir + f"texted__{topic}_red_white.bmp"
+    #insert text and export to image
     gen__generic(items, bw_path, rw_path, bw_outpath, rw_outpath)
-    run_epd(EPD_EXE_PATH, EPD_MODE, bw_outpath, rw_outpath)
+
+    #show eink
+    # dry_run = True
+    if dry_run:
+      print("DRY RUN: plotting")
+    else:
+      run_epd(EPD_EXE_PATH, EPD_MODE, bw_outpath, rw_outpath)

@@ -74,12 +74,16 @@ def setup_buttons(
     """Create devices, attach handlers, and register cleanup. Returns (btn20, led_red, btn16, led_green)."""
     global led_red
     global led_green
+    try:
+        btn20 = Button(btn20_pin, pull_up=True, bounce_time=bounce_time)
+        led_red = LED(led_red_pin)
 
-    btn20 = Button(btn20_pin, pull_up=True, bounce_time=bounce_time)
-    led_red = LED(led_red_pin)
-
-    btn16 = Button(btn16_pin, pull_up=True, bounce_time=bounce_time)
-    led_green = LED(led_green_pin)
+        btn16 = Button(btn16_pin, pull_up=True, bounce_time=bounce_time)
+        led_green = LED(led_green_pin)
+    except Exception as e:
+        print("Failed init button: ", e)
+        # TODO: handle error in main thread
+        return None, None, None, None
 
     # Handlers
     def on_release_btn20() -> None:

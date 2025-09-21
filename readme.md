@@ -16,6 +16,24 @@ python3 nina_warning_to_epd.py biw.BIWAPP-90480_NGRjZTkwNzI3NzRkZTBmNA --log-lev
 python3 nina_warning_to_epd.py mow.DE-BR-B-SE017-20250909-17-001 --log-level DEBUG --use-local-json
 ```
 
+### service
+```bash
+```
+sudo cp eink-service.service /etc/systemd/system/ && chmod +x run-eink.sh && sudo systemctl daemon-reload && sudo systemctl enable eink-service.service
+sudo systemctl start eink-service.service && sudo  journalctl -u eink-service -f
+
+# same log:
+tail -f eink.log
+
+sudo systemctl stop  eink-service.service
+# View all logs from the service
+journalctl -u eink-service.service
+
+# Follow logs live
+journalctl -u eink-service.service -f
+
+# View logs since boot
+journalctl -u eink-service.service --since today
 ```bash
 Steps:
 

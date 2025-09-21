@@ -1,0 +1,31 @@
+[Unit]
+Description=Kiezbox Eink 
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/kiezbox-ha
+# Need "sudo". Plain running with power user doesnt work.
+#Environment="VIRTUAL_ENV=/home/pi/kiezbox-ha/.venv/"
+#Environment="PATH=/home/pi/kiezbox-ha/.venv/bin:/usr/bin:/bin"
+#echo 'Using python: ' $(which python)
+#sudo python /home/pi/kiezbox-ha/start_script.py
+#ExecStart=/home/pi/kiezbox-ha/run-eink.sh
+
+ExecStart=/usr/bin/script -q -f -c /home/pi/kiezbox-ha/run-eink.sh /home/pi/kiezbox-ha/eink.log
+
+
+#ExecStart=/home/pi/kiezbox-ha/.venv/bin/python /home/pi/kiezbox-ha/start_script.py
+#ExecStart=echo $(which python)
+Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
+
+# Logging: with "script" -> double export. So commented out.
+# StandardOutput=append:/home/pi/kiezbox-ha/service.log
+# StandardError=append:/home/pi/kiezbox-ha/service.log
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

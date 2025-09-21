@@ -145,30 +145,33 @@ topics = [e.value for e in EinkTopic]
 #         outdir + "texted__kiezbox_sensor__rw.bmp"
 #     )
 
-def switch_topic(target_topic: EinkTopic = None):
+def switch_topic(target_topic: EinkTopic = None, dry_run: bool = False):
     """ By default jump to next topic. If target_topic, then show it """
     global current_topic
     print("Switching topic. Current: " + str(current_topic))
-
-    if target_topic != None:
-        target_topic(target_topic)
+    if eink_busy_flag.is_set():
+        print("Eink busy. Return")
     else:
-        next_topic = (current_topic.value + 1) % len(EinkTopic)
-        current_topic = EinkTopic(next_topic)
-        if current_topic == EinkTopic.MAIN or current_topic.value > 5:
-            print("Back to main. Turn led off")
-            eink_busy_flag.set()
-            turn_red_off()
-            run__slide(current_topic, TEMP_DIR)
-            eink_busy_flag.clear()
+        eink_busy_flag.set()
+        if target_topic != None:
+            run__slide(target_topic, TEMP_DIR, dry_run)
         else:
-            turn_red_on()
-            eink_busy_flag.set()
-            print("slide: ",current_topic.value)
-            run__slide(current_topic, TEMP_DIR)
-            eink_busy_flag.clear()
-
-    print("New topic: " + str(current_topic))
+            next_topic = (current_topic.value + 1) % len(EinkTopic)
+            current_topic = EinkTopic(next_topic)
+            if current_topic == EinkTopic.MAIN or current_topic.value > 5:
+                print("Back to main. Turn led off")
+                # eink_busy_flag.set()
+                turn_red_off()
+                run__slide(current_topic, TEMP_DIR, dry_run)
+                # eink_busy_flag.clear()
+            else:
+                turn_red_on()
+                # eink_busy_flag.set()
+                print("slide: ",current_topic.value)
+                run__slide(current_topic, TEMP_DIR, dry_run)
+                # eink_busy_flag.clear()
+        eink_busy_flag.clear()
+        print("New topic: " + str(current_topic))
 
 def on_red():
     # Sloppy check for concurrency:
@@ -209,25 +212,37 @@ if __name__ == "__main__":
     global current_topic
     current_topic = EinkTopic.MAIN
     run__slide(current_topic, TEMP_DIR)
-    # display_main_page()
 
-    # Start worker as a daemon (exits with the main program)
-    t = threading.Thread(target=buttons_worker, args=(eink_busy_flag,), daemon=True)
-    t.start()
+    #### ONLY for thread
+    # # Start worker as a daemon (exits with the main program)
+    # t = threading.Thread(target=buttons_worker, args=(eink_busy_flag,), daemon=True)
+    # t.start()
+    # # Retrieve the created devices so they don't get GC'd
+    # btn20, led_red, btn16, led_green = _devices_q.get()
 
-    # Retrieve the created devices so they don't get GC'd
-    btn20, led_red, btn16, led_green = _devices_q.get()
+    btn20, led_red, btn16, led_green = setup_buttons(
+        btn20_pin=DEFAULT_BTN20,
+        led_red_pin=DEFAULT_LED_RED,
+        btn16_pin=DEFAULT_BTN16,
+        led_green_pin=DEFAULT_LED_GREEN,
+        bounce_time=0.1,
+        eink_busy_flag=eink_busy_flag,
+        red_callback=on_red,
+        green_callback=on_green,
+    )
+    print("Init button returns: ", btn20, led_red, btn16, led_green)
 
-    # --- optional: clean shutdown handling ---
-    def _shutdown(*_args):
-        print("Shutting down...")
-        _stop.set()
-        # give worker a moment to exit
-        t.join(timeout=2.0)
-        sys.exit(0)
+    #### ONLY for thread
+    # # --- optional: clean shutdown handling ---
+    # def _shutdown(*_args):
+    #     print("Shutting down...")
+    #     _stop.set()
+    #     # give worker a moment to exit
+    #     t.join(timeout=2.0)
+    #     sys.exit(0)
 
-    signal.signal(signal.SIGINT, _shutdown)   # Ctrl+C
-    signal.signal(signal.SIGTERM, _shutdown)  # system stop
+    # signal.signal(signal.SIGINT, _shutdown)   # Ctrl+C
+    # signal.signal(signal.SIGTERM, _shutdown)  # system stop
 
     # Your main loop can keep doing other work here
     # time.sleep(15)
@@ -236,6 +251,15 @@ if __name__ == "__main__":
     try:
         while True:
             # ... other tasks ...
-            time.sleep(0.5)
+            time.sleep(10)
+            if not eink_busy_flag.is_set():
+                if current_topic != EinkTopic.MAIN:
+                    print("### Period task: Keep current topic: ", current_topic)
+                    continue
+                print("### Period task: start updating MAIN page.")
+                switch_topic(EinkTopic.MAIN)
+                print("### Period task: DONE updating MAIN page.")
+            
     except KeyboardInterrupt:
-        _shutdown()
+        print("### Shutting down ...")
+        # _shutdown()
